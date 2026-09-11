@@ -1,40 +1,40 @@
-# Gaby's AI Agent Workspace
+# Workspace de agentes de IA de Gaby
 
-## What This Is
+## Qué es esto
 
-A personalized AI agent team built for Gaby. Four collaborating agents handle routing, team growth, system health, and knowledge management. New specialist agents are hired as needed.
+Un equipo de agentes de IA personalizado, construido para Gaby. Cuatro agentes que colaboran cubren el ruteo, el crecimiento del equipo, la salud del sistema y la gestión del conocimiento. Los agentes especialistas se contratan según haga falta.
 
-## Your Agents
+## Tus agentes
 
-| Agent | Role | Address them for |
+| Agente | Rol | Diríjete a este para |
 |-------|------|-----------------|
-| Alfred | Orchestrator (default) | Everything you do not explicitly direct to another agent |
-| Alicia | HR Lead | Hiring new specialists, team design |
-| Tuti | System Reviewer | System audits, profile quality, playbooks, ecosystem improvements |
-| Joy | Knowledge Manager | Ingesting documents, vault Q&A, concept articles |
+| Alfred | Orquestador (por defecto) | Todo lo que no dirijas explícitamente a otro agente |
+| Alicia | Líder de HR | Contratar nuevos especialistas, diseño de equipo |
+| Tuti | Revisora del Sistema | Auditorías del sistema, calidad de los perfiles, playbooks, mejoras al ecosistema |
+| Joy | Gestora de Conocimiento | Ingest de documentos, Q&A sobre el vault, artículos de concepto |
 
-## How to Use
+## Cómo usarlo
 
-Open Claude Code in this folder (`claude`) and talk to any agent by name, or just start talking and Alfred will route your request.
+Abre Claude Code en esta carpeta (`claude`) y háblale a cualquier agente por su nombre, o simplemente empieza a hablar y Alfred ruteará tu solicitud.
 
-## Folder Structure
+## Estructura de carpetas
 
 ```
-Team Inbox/        ← agent work queue (To Do / Doing / Done)
-Owner Inbox/       ← your queue (Pending Review / Approved / Output)
-Projects/          ← multi-agent collaborative work
-Playbooks/         ← reusable workflow coordination
-Data/              ← shared reference and templates
-Knowledge/         ← your knowledge base (Inbox for ingest, Vault for search)
-Scripts/           ← automation hooks
-.claude/agents/    ← native agent definitions (runtime)
-Team/              ← agent profiles and memories (HR records)
-Alfred/            ← orchestrator memory
+Team Inbox/        ← cola de trabajo de los agentes (To Do / Doing / Done)
+Owner Inbox/       ← tu cola (Pending Review / Approved / Output)
+Projects/          ← trabajo colaborativo multiagente
+Playbooks/         ← coordinación de flujos reutilizable
+Data/              ← referencia y plantillas compartidas
+Knowledge/         ← tu base de conocimiento (Inbox para ingest, Vault para búsqueda)
+Scripts/           ← hooks de automatización
+.claude/agents/    ← definiciones nativas de agente (runtime)
+Team/              ← perfiles y memorias de los agentes (expedientes de HR)
+Alfred/            ← memoria del orquestador
 ```
 
-## Reference
+## Referencia
 
-- Work system: `Data/work-system.md`
-- Writing rules: `Data/writing-rules.md`
+- Sistema de trabajo: `Data/work-system.md`
+- Reglas de escritura: `Data/writing-rules.md`
 - Playbooks: `Playbooks/_index.md`
-- Setup reference: `Data/SETUP.md`
+- Referencia de instalación: `Data/SETUP.md` (se conserva en su idioma original, es el kit del instalador)

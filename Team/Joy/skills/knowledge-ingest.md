@@ -1,75 +1,75 @@
 ---
 name: knowledge-ingest
-description: Process raw documents from Knowledge/Inbox/ into structured source summaries and concept candidates in the Knowledge Vault. Use whenever a new document arrives in the inbox.
+description: Procesa documentos crudos de Knowledge/Inbox/ y los convierte en resúmenes de fuente estructurados y candidatos a concepto dentro del Knowledge Vault. Úsala siempre que llegue un documento nuevo al inbox.
 ---
 
-# Skill: Knowledge Ingest
+# Skill: Ingest de conocimiento
 
-**Agent:** Joy
+**Agente:** Joy
 
-## What This Skill Covers
+## Qué cubre esta skill
 
-Ingest is the entry point for all new knowledge. Every document that lands in `Knowledge/Inbox/` passes through this workflow before anything enters the vault. The goal is to make the document's knowledge findable and linkable.
+El ingest es la puerta de entrada de todo el conocimiento nuevo. Cada documento que aterriza en `Knowledge/Inbox/` pasa por este flujo antes de que algo entre al vault. El objetivo es hacer que el conocimiento del documento sea encontrable y enlazable.
 
-## Ingest Workflow
+## Flujo de ingest
 
-### Step 1: Read the source document
-Read the full document in `Knowledge/Inbox/`. Do not skim. Record the domain, origin, and date as you read.
+### Paso 1: Leer el documento fuente
+Lee el documento completo en `Knowledge/Inbox/`. No lo hojees. Registra el dominio, el origen y la fecha mientras lees.
 
-### Step 2: Write the source summary
-Create `Vault/sources/[slug].md` using the template below. The slug should be lowercase-hyphenated and descriptive.
+### Paso 2: Escribir el resumen de fuente
+Crea `Vault/sources/[slug].md` con la plantilla de abajo. El slug debe ir en minúsculas con guiones y ser descriptivo.
 
-### Step 3: Identify concept candidates
-As you write the summary, list all concepts in the Key concepts section. For each:
-- If a concept article already exists in `Vault/concepts/` → add a backlink from the source summary to the existing article
-- If the concept is new → decide whether to create the article now (see Decision Rules)
+### Paso 3: Identificar candidatos a concepto
+Mientras escribes el resumen, lista todos los conceptos en la sección de conceptos clave. Para cada uno:
+- Si ya existe un artículo de concepto en `Vault/concepts/` → agrega un backlink desde el resumen de fuente hacia el artículo existente
+- Si el concepto es nuevo → decide si crear el artículo ahora (ver Reglas de decisión)
 
-### Step 4: Link source to concepts
-For any concept article that already exists and is relevant, add a backlink in the concept article's Sources section pointing to this source summary.
+### Paso 4: Enlazar la fuente con los conceptos
+Para cada artículo de concepto que ya exista y sea relevante, agrega un backlink en la sección de Fuentes de ese artículo apuntando a este resumen de fuente.
 
-### Step 5: Update `_index.md`
-Add a one-line entry for the new source in `Vault/_index.md` under the Sources section:
+### Paso 5: Actualizar `_index.md`
+Agrega una entrada de una línea para la fuente nueva en `Vault/_index.md`, bajo la sección de Fuentes:
 ```
-- [[sources/slug]] - [one-line: what this source is and why it matters]
+- [[sources/slug]] - [una línea: qué es esta fuente y por qué importa]
 ```
-No exceptions. The index must reflect the vault's actual state at the end of every ingest session.
+Sin excepciones. El índice debe reflejar el estado real del vault al final de cada sesión de ingest.
 
-### Step 6: Archive the source file
-Once the source summary, concept links, and index update are all complete, move the original file from `Knowledge/Inbox/` to `Knowledge/Archive/`, preserving its filename. This keeps the inbox clean and signals the document is fully processed. Never delete; only move. If multiple files were ingested in one session, archive each as it completes.
+### Paso 6: Archivar el archivo fuente
+Una vez que el resumen de fuente, los enlaces a conceptos y la actualización del índice estén todos completos, mueve el archivo original de `Knowledge/Inbox/` a `Knowledge/Archive/`, conservando su nombre. Esto mantiene el inbox limpio y señala que el documento está totalmente procesado. Nunca borres; solo mueve. Si se ingirieron varios archivos en una sesión, archiva cada uno a medida que se complete.
 
-## Source Summary Template (`Vault/sources/[slug].md`)
+## Plantilla de resumen de fuente (`Vault/sources/[slug].md`)
 
 ```
-# Source: [Title]
+# Fuente: [Título]
 
-**File:** [original filename in Inbox/]
-**Date added:** [YYYY-MM-DD]
-**Domain:** [e.g., project management / research / meeting notes]
-**Original source:** [URL or "internal"]
+**Archivo:** [nombre original del archivo en Inbox/]
+**Fecha de alta:** [YYYY-MM-DD]
+**Dominio:** [p. ej., gestión de proyectos / investigación / notas de reunión]
+**Fuente original:** [URL o "interno"]
 
 ---
 
-## Summary
-[3-5 sentences: what this document contains and why it matters]
+## Resumen
+[3-5 frases: qué contiene este documento y por qué importa]
 
-## Key concepts
-- [concept] → [[concepts/slug]] (link if article exists)
+## Conceptos clave
+- [concepto] → [[concepts/slug]] (enlazar si el artículo existe)
 
-## Relevance
-[One sentence: what questions this source helps answer]
+## Relevancia
+[Una frase: qué preguntas ayuda a responder esta fuente]
 ```
 
-## Decision Rules
+## Reglas de decisión
 
-**Create a new concept article when:**
-- The concept does not appear in `Vault/_index.md`
-- The concept is distinct enough from existing articles
-- The concept is likely to be referenced by multiple future sources
+**Crea un artículo de concepto nuevo cuando:**
+- El concepto no aparece en `Vault/_index.md`
+- El concepto es lo bastante distinto de los artículos existentes
+- Es probable que futuras fuentes lo referencien varias veces
 
-**Update an existing concept article when:**
-- The source adds new detail, nuance, or evidence
-- The existing article is a stub and this source fills it out
+**Actualiza un artículo de concepto existente cuando:**
+- La fuente aporta detalle, matiz o evidencia nuevos
+- El artículo existente es apenas un esbozo y esta fuente lo completa
 
-**Defer when:**
-- The concept appears only once and is unlikely to recur
-- Sufficient context already exists in other articles
+**Posterga cuando:**
+- El concepto aparece una sola vez y es poco probable que se repita
+- Ya hay contexto suficiente en otros artículos

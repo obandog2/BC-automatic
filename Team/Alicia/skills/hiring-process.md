@@ -1,25 +1,25 @@
 ---
 name: hiring-process
-description: Full procedure for designing and creating a new agent. Use whenever asked to hire a new specialist.
+description: Procedimiento completo para diseñar y crear un agente nuevo. Úsalo siempre que te pidan contratar a un especialista nuevo.
 ---
 
-# Skill: Hiring Process
+# Skill: Proceso de contratación
 
-**Agent:** Alicia
+**Agente:** Alicia
 
-This skill is embedded in the Alicia native agent file and reproduced here for reference. The canonical hiring procedure is in `.claude/agents/alicia.md` under "Hiring Procedure".
+Esta skill está incrustada en el archivo de agente nativo de Alicia y se reproduce aquí como referencia. El procedimiento canónico de contratación está en `.claude/agents/alicia.md`, bajo "Procedimiento de contratación".
 
-## Summary
+## Resumen
 
-1. Interview the owner (five questions, one at a time)
-2. Design the profile (expertise, persona, tools, skills)
-3. Present for approval (show Team/.md, .claude/agents/.md, and the routing table line)
-4. Create the files on approval (Team profile, native agent file, memory seed, CLAUDE.md update)
+1. Entrevistar a la owner (cinco preguntas, una a la vez)
+2. Diseñar el perfil (experticia, persona, herramientas, skills)
+3. Presentar para aprobación (mostrar Team/.md, .claude/agents/.md, y la línea de la tabla de ruteo)
+4. Crear los archivos una vez aprobado (perfil en Team, archivo de agente nativo, semilla de memoria, actualización de CLAUDE.md)
 
-## File Standards
+## Estándares de archivo
 
-See the profile writing standards section in `.claude/agents/alicia.md`.
+Ver la sección de estándares de redacción de perfiles en `.claude/agents/alicia.md`.
 
-## After Hire
+## Después de contratar
 
-Tell the owner to restart Claude Code for the native agent to activate. After the restart, addressing the new agent by name will reach it.
+Dile a la owner que reinicie Claude Code para que el agente nativo se active. Después del reinicio, dirigirse al nuevo agente por su nombre lo alcanzará.

@@ -1,58 +1,58 @@
 ---
 name: wiki-compile
-description: Build and maintain concept articles in Knowledge/Vault/concepts/. Use when creating a new concept article, updating an existing one, or running a vault lint pass.
+description: Construye y mantiene artículos de concepto en Knowledge/Vault/concepts/. Úsala al crear un artículo de concepto nuevo, al actualizar uno existente, o al correr una pasada de lint del vault.
 ---
 
-# Skill: Vault Compilation
+# Skill: Compilación del vault
 
-**Agent:** Joy
+**Agente:** Joy
 
-## What This Skill Covers
+## Qué cubre esta skill
 
-Compilation turns extracted knowledge into durable concept articles. Where ingest captures what a source says, compilation captures what it means. Concept articles are written for future readers (human or agent) arriving with no prior context.
+La compilación convierte el conocimiento extraído en artículos de concepto duraderos. Donde el ingest captura qué dice una fuente, la compilación captura qué significa. Los artículos de concepto se escriben para lectores futuros (humanos o agentes) que llegan sin contexto previo.
 
-## Concept Article Workflow
+## Flujo del artículo de concepto
 
-1. Draft the article in `Vault/concepts/[slug].md` using the template below
-2. Set backlinks to sources (every claim should trace to a source; list in Sources section)
-3. Link to related concepts (bidirectional links; update the related article too)
-4. Update `_index.md` with a one-line entry for the new concept
+1. Redacta el artículo en `Vault/concepts/[slug].md` con la plantilla de abajo
+2. Coloca backlinks a las fuentes (cada afirmación debe poder rastrearse a una fuente; lístalas en la sección de Fuentes)
+3. Enlaza con conceptos relacionados (enlaces bidireccionales; actualiza también el artículo relacionado)
+4. Actualiza `_index.md` con una entrada de una línea para el concepto nuevo
 
-No concept article leaves a session without backlinks to at least one source.
+Ningún artículo de concepto sale de una sesión sin backlinks a al menos una fuente.
 
-## Concept Article Template (`Vault/concepts/[slug].md`)
+## Plantilla de artículo de concepto (`Vault/concepts/[slug].md`)
 
 ```
-# [Concept Name]
+# [Nombre del concepto]
 
-**Domain:** [e.g., project management]
-**Last updated:** [YYYY-MM-DD]
+**Dominio:** [p. ej., gestión de proyectos]
+**Última actualización:** [YYYY-MM-DD]
 
 ---
 
-## Definition
-[2-3 sentences: what this concept is]
+## Definición
+[2-3 frases: qué es este concepto]
 
-## Key points
-- [point]
+## Puntos clave
+- [punto]
 
-## Related concepts
-- [[concepts/related-slug]] - [one-line description of relationship]
+## Conceptos relacionados
+- [[concepts/related-slug]] - [descripción en una línea de la relación]
 
-## Sources
-- [[sources/slug]] - [one-line note on what this source contributes]
+## Fuentes
+- [[sources/slug]] - [nota de una línea sobre qué aporta esta fuente]
 ```
 
-## Lint Workflow
+## Flujo de lint
 
-A lint pass is a health check on the vault. Run it when tasked or quarterly.
+Una pasada de lint es un chequeo de salud del vault. Córrela cuando te la asignen, o trimestralmente.
 
-| Check | Description |
+| Chequeo | Descripción |
 |-------|-------------|
-| **Index accuracy** | Every file in `Vault/` has an entry in `_index.md`; no `_index.md` entries point to missing files |
-| **Broken backlinks** | Every `[[concepts/slug]]` and `[[sources/slug]]` reference resolves to a real file |
-| **Stub articles** | Concept articles with only a definition and no key points or sources |
-| **Source orphans** | Source summaries with no concept backlinks |
-| **Concept orphans** | Concept articles with no source citations |
+| **Exactitud del índice** | Cada archivo en `Vault/` tiene entrada en `_index.md`; ninguna entrada de `_index.md` apunta a archivos inexistentes |
+| **Backlinks rotos** | Cada referencia `[[concepts/slug]]` y `[[sources/slug]]` resuelve a un archivo real |
+| **Artículos esbozo** | Artículos de concepto que solo tienen definición, sin puntos clave ni fuentes |
+| **Fuentes huérfanas** | Resúmenes de fuente sin backlinks a conceptos |
+| **Conceptos huérfanos** | Artículos de concepto sin citas de fuente |
 
-Lint findings go to `Vault/outputs/lint-[YYYY-MM-DD].md`. Fix clear errors in the same session; flag editorial decisions for the owner.
+Los hallazgos de lint van a `Vault/outputs/lint-[YYYY-MM-DD].md`. Corrige los errores claros en la misma sesión; señala a la owner las decisiones editoriales.

@@ -1,7 +1,7 @@
 #!/bin/sh
-# SessionStart hook: list pending tasks in Team Inbox/To Do/.
-# Prints nothing when the inbox is empty (no output on clean sessions).
-# Registered in .claude/settings.json (project scope).
+# Hook SessionStart: lista las tareas pendientes en Team Inbox/To Do/.
+# No imprime nada cuando el inbox esta vacio (sin salida en sesiones limpias).
+# Registrado en .claude/settings.json (alcance de proyecto).
 
 INBOX="${CLAUDE_PROJECT_DIR:-$(pwd)}/Team Inbox/To Do"
 
@@ -18,4 +18,4 @@ done
 
 [ "$count" -eq 0 ] && exit 0
 
-echo "PENDING TASKS in Team Inbox/To Do/ ($count). Report these to the owner before starting new work:$files"
+echo "TAREAS PENDIENTES en Team Inbox/To Do/ ($count). Repórtaselas a la owner antes de empezar trabajo nuevo:$files"

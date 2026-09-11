@@ -2,26 +2,26 @@
 last-consolidated: 2026-09-11
 ---
 
-# Joy - Working Memory
+# Joy - Memoria de trabajo
 
-> Instructions for Joy: Record ingest decisions, vault structure choices, and patterns for handling different document types.
+> Instrucciones para Joy: Registra decisiones de ingest, elecciones de estructura del vault, y patrones para manejar distintos tipos de documento.
 
 ---
 
 ## Hot Context
 
-[Nothing yet. Record active ingest tasks and open vault work here.]
+[Nada todavía. Registra aquí las tareas de ingest activas y el trabajo abierto del vault.]
 
 ---
 
 ## Stable Knowledge
 
-### Vault State
+### Estado del vault
 
-- Concepts: 0 articles
-- Sources: 0 summaries
-- Last ingest: none yet
+- Conceptos: 0 artículos
+- Fuentes: 0 resúmenes
+- Último ingest: ninguno todavía
 
-### Ingest Notes
+### Notas de ingest
 
-[Record patterns for handling specific document types, edge cases, and decisions about the vault structure.]
+[Registra patrones para manejar tipos de documento específicos, casos borde, y decisiones sobre la estructura del vault.]

@@ -1,56 +1,56 @@
-# Playbook: Periodic System Audit
+# Playbook: Auditoría periódica del sistema
 
-**Maintained by:** Tuti
-**Last updated:** 2026-09-11
+**Mantenido por:** Tuti
+**Última actualización:** 2026-09-11
 
-## Purpose
+## Propósito
 
-A quarterly health check of the entire agent ecosystem. Catches drift, consolidates memories, refreshes playbooks, and ensures the system stays clean as the team grows.
+Un chequeo trimestral de salud de todo el ecosistema de agentes. Atrapa la deriva, consolida memorias, refresca los playbooks, y mantiene el sistema limpio a medida que el equipo crece.
 
-## Trigger
+## Disparador
 
-Run this playbook:
-- Every quarter (or whenever the owner requests a system health check)
-- When a memory file reaches 800 words
-- When a new agent has been active for 90 days and has never been audited
+Corre este playbook:
+- Cada trimestre (o cuando la owner pida un chequeo de salud del sistema)
+- Cuando un archivo de memoria llegue a 800 palabras
+- Cuando un agente nuevo lleve 90 días activo y nunca haya sido auditado
 
-## Flow
+## Flujo
 
 ```
-1. Tuti reads all profiles, native agent files, memories, and CLAUDE.md
+1. Tuti lee todos los perfiles, archivos de agente nativo, memorias y CLAUDE.md
          │
          ▼
-2. Tuti produces audit report → Owner Inbox/Pending Review/
+2. Tuti produce el reporte de auditoría → Owner Inbox/Pending Review/
          │
          ▼
-3. Owner reviews findings and confirms priority actions
+3. La owner revisa los hallazgos y confirma las acciones prioritarias
          │
          ▼
-4. Tuti implements approved changes (profiles, memories, playbooks)
+4. Tuti implementa los cambios aprobados (perfiles, memorias, playbooks)
          │
          ▼
-5. Tuti updates Playbooks/_index.md and bumps work-system.md version
+5. Tuti actualiza Playbooks/_index.md y sube la versión de work-system.md
          │
          ▼
-6. Tuti confirms completion in Owner Inbox/Output/
+6. Tuti confirma que terminó en Owner Inbox/Output/
 ```
 
-## Step Details
+## Detalle de los pasos
 
-**Step 1:** Use the `ecosystem-audit` skill (see `Team/Tuti/skills/ecosystem-audit.md`). Read everything before writing the report.
+**Paso 1:** Usa la skill `ecosystem-audit` (ver `Team/Tuti/skills/ecosystem-audit.md`). Lee todo antes de escribir el reporte.
 
-**Step 2:** The report format is defined in the ecosystem-audit skill. File it to `Owner Inbox/Pending Review/` with Needs: Review.
+**Paso 2:** El formato del reporte está definido en la skill ecosystem-audit. Archívalo en `Owner Inbox/Pending Review/` con Necesita: Revisión.
 
-**Step 3:** Owner reads the report and marks which Critical and Advisory findings to action. Observations are optional.
+**Paso 3:** La owner lee el reporte y marca qué hallazgos Críticos y de Advertencia se van a accionar. Las Observaciones son opcionales.
 
-**Step 4:** Tuti implements only the confirmed actions. Does not make changes beyond what was approved.
+**Paso 4:** Tuti implementa solo las acciones confirmadas. No hace cambios más allá de lo aprobado.
 
-**Step 5:** If any playbook files were changed, update the index. If the work system was changed, bump the version number in `Data/work-system.md`.
+**Paso 5:** Si se cambió algún archivo de playbook, actualiza el índice. Si se cambió el sistema de trabajo, sube el número de versión en `Data/work-system.md`.
 
-**Step 6:** Write a brief completion note to `Owner Inbox/Output/`: what was changed, what was deferred, next audit date.
+**Paso 6:** Escribe una nota breve de cierre en `Owner Inbox/Output/`: qué se cambió, qué se postergó, y la fecha de la próxima auditoría.
 
-## Notes
+## Notas
 
-- Do not skip Step 3. Tuti does not implement changes without owner confirmation.
-- Memory consolidation happens as part of Step 4 for any flagged memories.
-- If a new playbook was proposed during the audit, create it in `Playbooks/` and add it to the index in Step 5.
+- No te saltes el Paso 3. Tuti no implementa cambios sin confirmación de la owner.
+- La consolidación de memorias ocurre como parte del Paso 4 para cualquier memoria señalada.
+- Si durante la auditoría se propuso un playbook nuevo, créalo en `Playbooks/` y agrégalo al índice en el Paso 5.

@@ -1,34 +1,34 @@
-# Knowledge Vault - Master Index
+# Knowledge Vault - Índice maestro
 
-**Maintained by:** Joy
-**Last updated:** 2026-09-11
+**Mantenido por:** Joy
+**Última actualización:** 2026-09-11
 
-> This index is the single source of truth for what is in the vault. Every source summary and concept article has a one-line entry here. Check this file first before any knowledge work.
-
----
-
-## Concepts
-
-[Nothing yet. Entries appear here after the first ingest session.]
-
-Format:
-```
-- [[concepts/slug]] - [one-line: what this concept is]
-```
+> Este índice es la fuente única de verdad sobre qué hay en el vault. Cada resumen de fuente y cada artículo de concepto tiene aquí una entrada de una línea. Revisa este archivo antes de cualquier trabajo de conocimiento.
 
 ---
 
-## Sources
+## Conceptos
 
-[Nothing yet. Entries appear here after the first ingest session.]
+[Nada todavía. Las entradas aparecen aquí después de la primera sesión de ingest.]
 
-Format:
+Formato:
 ```
-- [[sources/slug]] - [one-line: what this source is and why it matters]
+- [[concepts/slug]] - [una línea: qué es este concepto]
 ```
 
 ---
 
-## How to Add Knowledge
+## Fuentes
 
-Drop a document in `Knowledge/Inbox/` following the naming convention in `Knowledge/Inbox/README.md`, then ask Joy to ingest it.
+[Nada todavía. Las entradas aparecen aquí después de la primera sesión de ingest.]
+
+Formato:
+```
+- [[sources/slug]] - [una línea: qué es esta fuente y por qué importa]
+```
+
+---
+
+## Cómo agregar conocimiento
+
+Deja un documento en `Knowledge/Inbox/` siguiendo la convención de nombres de `Knowledge/Inbox/README.md`, y después pídele a Joy que lo ingiera.

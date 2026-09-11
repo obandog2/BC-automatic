@@ -1,51 +1,51 @@
-# Playbook: Draft-Deliver Handoff
+# Playbook: Traspaso de borrador a entrega
 
-**Maintained by:** Tuti
-**Last updated:** 2026-09-11
+**Mantenido por:** Tuti
+**Última actualización:** 2026-09-11
 
-## Purpose
+## Propósito
 
-A two-agent chain where one agent drafts a piece of communication or deliverable and a second agent handles the final delivery after owner approval. Use this any time a draft requires review before it goes out.
+Una cadena de dos agentes donde uno redacta una pieza de comunicación o un entregable y un segundo se encarga de la entrega final después de la aprobación de la owner. Úsalo siempre que un borrador requiera revisión antes de salir.
 
-## Trigger
+## Disparador
 
-Use this playbook when:
-- An agent has produced a draft (email, message, document, report) that requires owner approval before delivery
-- A second agent handles the delivery channel or final formatting
+Usa este playbook cuando:
+- Un agente produjo un borrador (correo, mensaje, documento, reporte) que requiere aprobación de la owner antes de entregarse
+- Un segundo agente maneja el canal de entrega o el formato final
 
-## Flow
+## Flujo
 
 ```
-1. Drafting agent creates draft
+1. El agente redactor crea el borrador
          │
          ▼
-2. Draft goes to Owner Inbox/Pending Review/
+2. El borrador va a Owner Inbox/Pending Review/
          │
          ▼
-3. Owner reviews and approves (moves file to Owner Inbox/Approved/ or signals approval in session)
+3. La owner revisa y aprueba (mueve el archivo a Owner Inbox/Approved/ o señala la aprobación en sesión)
          │
          ▼
-4. Delivery agent picks up approved draft and executes delivery
+4. El agente de entrega toma el borrador aprobado y ejecuta la entrega
          │
          ▼
-5. Delivery agent confirms completion in Owner Inbox/Output/ or reports back inline
+5. El agente de entrega confirma que terminó en Owner Inbox/Output/ o reporta en línea
 ```
 
-## Step Details
+## Detalle de los pasos
 
-**Step 2:** The drafting agent writes the file to `Owner Inbox/Pending Review/` with the standard Pending Review format. It notes in the "Options / Recommended action" field which delivery agent should handle step 4 and what the delivery channel is.
+**Paso 2:** El agente redactor escribe el archivo en `Owner Inbox/Pending Review/` con el formato estándar de Pending Review. Anota en el campo "Opciones / Acción recomendada" qué agente de entrega debe encargarse del paso 4 y cuál es el canal de entrega.
 
-**Step 3:** The owner either approves in session (tells the orchestrator "approved, deliver it") or moves the file to `Owner Inbox/Approved/`.
+**Paso 3:** La owner aprueba en sesión (le dice al orquestador "aprobado, entrégalo") o mueve el archivo a `Owner Inbox/Approved/`.
 
-**Step 4:** The delivery agent reads the approved file, confirms the delivery channel and target, and executes. If anything is ambiguous, it asks before delivering.
+**Paso 4:** El agente de entrega lee el archivo aprobado, confirma el canal de entrega y el destinatario, y ejecuta. Si algo es ambiguo, pregunta antes de entregar.
 
-**Step 5:** The delivery agent writes a brief confirmation: what was delivered, to whom, when.
+**Paso 5:** El agente de entrega escribe una confirmación breve: qué se entregó, a quién y cuándo.
 
-## Direct-Chains
+## Cadenas directas
 
-This playbook authorizes the delivery agent to execute directly once the owner approves. The orchestrator does not need to be re-involved at step 4 if the approval is explicit.
+Este playbook autoriza al agente de entrega a ejecutar directamente una vez que la owner aprueba. No hace falta volver a involucrar al orquestador en el paso 4 si la aprobación fue explícita.
 
-## Notes
+## Notas
 
-- If the delivery agent is not yet hired, pause at step 2 and ask Alicia to design the right specialist.
-- If the owner wants to edit the draft before delivery, the drafting agent handles revisions before the file moves to Approved/.
+- Si el agente de entrega todavía no está contratado, haz una pausa en el paso 2 y pídele a Alicia que diseñe al especialista correcto.
+- Si la owner quiere editar el borrador antes de la entrega, el agente redactor se encarga de las revisiones antes de que el archivo pase a Approved/.

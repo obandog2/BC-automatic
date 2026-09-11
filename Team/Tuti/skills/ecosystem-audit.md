@@ -1,75 +1,75 @@
 ---
 name: ecosystem-audit
-description: Structured audit of the entire agent ecosystem. Use when asked for a system audit, health check, or when preparing for quarterly memory consolidation.
+description: Auditoría estructurada de todo el ecosistema de agentes. Úsala cuando pidan una auditoría del sistema, un chequeo de salud, o al preparar la consolidación trimestral de memorias.
 ---
 
-# Skill: Ecosystem Audit
+# Skill: Auditoría del ecosistema
 
-**Agent:** Tuti
+**Agente:** Tuti
 
-## What This Skill Covers
+## Qué cubre esta skill
 
-A full audit examines every agent profile, every memory file, the CLAUDE.md routing table, the Playbooks index, and the folder structure. The goal is to catch drift before it causes problems: profiles that no longer match their native agent files, memories that have grown bloated, playbooks that are stale, and structural gaps.
+Una auditoría completa examina cada perfil de agente, cada archivo de memoria, la tabla de ruteo de CLAUDE.md, el índice de Playbooks y la estructura de carpetas. El objetivo es atrapar la deriva antes de que cause problemas: perfiles que ya no coinciden con sus archivos de agente nativo, memorias que se inflaron, playbooks obsoletos, y huecos estructurales.
 
-## Audit Checklist
+## Checklist de auditoría
 
-### 1. Profile Sync
-- Read every `Team/[Name].md`
-- Read every `.claude/agents/[name].md`
-- Flag: profile and native file out of sync on role, scope, or voice
-- Flag: agent in Team/ with no native file (will use fallback spawning)
-- Flag: native file with no Team/ profile
+### 1. Sincronía de perfiles
+- Leer cada `Team/[Nombre].md`
+- Leer cada `.claude/agents/[nombre].md`
+- Señalar: perfil y archivo nativo desincronizados en rol, alcance o voz
+- Señalar: agente en Team/ sin archivo nativo (usará spawn de respaldo)
+- Señalar: archivo nativo sin perfil en Team/
 
-### 2. Memory Health
-- Read every `Team/[Name]/memory.md` and `Alfred/memory.md`
-- Flag: memory over 800 words (consolidation due)
-- Flag: Hot Context entries older than 90 days (likely stale)
-- Flag: memories with no entries (agent has been active but not recording)
+### 2. Salud de las memorias
+- Leer cada `Team/[Nombre]/memory.md` y `Alfred/memory.md`
+- Señalar: memoria de más de 800 palabras (toca consolidar)
+- Señalar: entradas de Hot Context con más de 90 días (probablemente obsoletas)
+- Señalar: memorias sin entradas (el agente estuvo activo pero no registró nada)
 
-### 3. Routing Table
-- Read `CLAUDE.md`
-- Verify every agent in the routing table has a native file in `.claude/agents/`
-- Flag: agents in Team/ not represented in the routing table
+### 3. Tabla de ruteo
+- Leer `CLAUDE.md`
+- Verificar que cada agente de la tabla de ruteo tenga archivo nativo en `.claude/agents/`
+- Señalar: agentes en Team/ que no aparecen en la tabla de ruteo
 
 ### 4. Playbooks
-- Read `Playbooks/_index.md`
-- Verify every listed playbook file exists
-- Flag: playbooks referenced in agent profiles that are not in the index
+- Leer `Playbooks/_index.md`
+- Verificar que exista cada archivo de playbook listado
+- Señalar: playbooks referenciados en perfiles de agente que no están en el índice
 
-### 5. Folder Structure
-- Use Bash to list key directories
-- Flag: unexpected files at the root
-- Flag: agents with no `skills/` folder when the role warrants one
+### 5. Estructura de carpetas
+- Usar Bash para listar los directorios clave
+- Señalar: archivos inesperados en la raíz
+- Señalar: agentes sin carpeta `skills/` cuando el rol la amerita
 
-## Report Format
+## Formato del reporte
 
 ```
-# Ecosystem Audit - [YYYY-MM-DD]
+# Auditoría del ecosistema - [YYYY-MM-DD]
 
-**Scope:** [what was checked]
-**Health summary:** [Green | Yellow | Red] - [one sentence]
+**Alcance:** [qué se revisó]
+**Resumen de salud:** [Verde | Amarillo | Rojo] - [una frase]
 
-## Findings
+## Hallazgos
 
-### Critical (fix now)
-1. [Finding] - [file] - [action]
+### Críticos (arreglar ya)
+1. [Hallazgo] - [archivo] - [acción]
 
-### Advisory (fix soon)
-1. [Finding] - [file] - [action]
+### Advertencias (arreglar pronto)
+1. [Hallazgo] - [archivo] - [acción]
 
-### Observations (optional improvements)
-1. [Finding] - [file] - [action]
+### Observaciones (mejoras opcionales)
+1. [Hallazgo] - [archivo] - [acción]
 
-## Recommended next actions
-1. [Priority action]
+## Próximas acciones recomendadas
+1. [Acción prioritaria]
 ```
 
-## Consolidation Procedure
+## Procedimiento de consolidación
 
-When a memory file reaches 800 words:
-1. Identify stable how-tos that belong in a skill file
-2. Identify facts that belong in `Knowledge/Vault/`
-3. Move them to their destination
-4. Prune stale Hot Context entries
-5. Rewrite the memory file under budget
-6. Record the consolidation date in the frontmatter
+Cuando un archivo de memoria llega a 800 palabras:
+1. Identificar los how-tos estables que pertenecen a un archivo de skill
+2. Identificar los hechos que pertenecen a `Knowledge/Vault/`
+3. Moverlos a su destino
+4. Podar las entradas obsoletas de Hot Context
+5. Reescribir el archivo de memoria por debajo del presupuesto
+6. Registrar la fecha de consolidación en el frontmatter

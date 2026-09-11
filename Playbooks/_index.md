@@ -1,26 +1,26 @@
-# Playbooks - Index
+# Playbooks - Índice
 
-**Maintained by:** Tuti
-**Last updated:** 2026-09-11
-**Total playbooks:** 2
+**Mantenido por:** Tuti
+**Última actualización:** 2026-09-11
+**Total de playbooks:** 2
 
-> Playbooks are reusable workflow definitions for recurring, well-understood agent coordination sequences. One playbook = one file. Agents check here before coordinating multi-agent work.
+> Los playbooks son definiciones de flujos reutilizables para secuencias de coordinación entre agentes que son recurrentes y bien entendidas. Un playbook = un archivo. Los agentes revisan aquí antes de coordinar trabajo multiagente.
 
 ---
 
-## Flow Playbooks
+## Playbooks de flujo
 
-| Playbook | Primary agents | Purpose |
+| Playbook | Agentes principales | Propósito |
 |----------|---------------|---------|
-| [draft-deliver-handoff](draft-deliver-handoff.md) | Any drafting agent + any delivery agent | Hand off an approved draft for final delivery |
-| [periodic-system-audit](periodic-system-audit.md) | Tuti | Quarterly ecosystem health check and memory consolidation |
+| [draft-deliver-handoff](draft-deliver-handoff.md) | Cualquier agente redactor + cualquier agente de entrega | Traspasar un borrador aprobado para su entrega final |
+| [periodic-system-audit](periodic-system-audit.md) | Tuti | Chequeo trimestral de salud del ecosistema y consolidación de memorias |
 
 ---
 
-## How to Propose a New Playbook
+## Cómo proponer un playbook nuevo
 
-When a workflow repeats across three or more instances with the same agent coordination:
+Cuando un flujo se repite en tres o más instancias con la misma coordinación de agentes:
 
-1. Any agent proposes it via sub-task to Tuti
-2. Tuti creates the playbook file in `Playbooks/`
-3. Tuti updates this index
+1. Cualquier agente lo propone por sub-tarea a Tuti
+2. Tuti crea el archivo de playbook en `Playbooks/`
+3. Tuti actualiza este índice

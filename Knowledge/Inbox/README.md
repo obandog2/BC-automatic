@@ -1,33 +1,33 @@
 # Knowledge Inbox
 
-## What This Folder Is
+## Qué es esta carpeta
 
-The Knowledge Inbox is the entry point for all documents you want Joy to process and add to the vault. Drop any file here and then ask Joy to ingest it.
+El Knowledge Inbox es la puerta de entrada para todos los documentos que quieras que Joy procese y agregue al vault. Deja cualquier archivo aquí y después pídele a Joy que lo ingiera.
 
-## How to Use It
+## Cómo usarla
 
-1. Copy or move the document into this folder.
-2. Rename it to a descriptive lowercase slug with the date, for example: `2026-06-meeting-notes-strategy.md` or `2026-07-research-paper-topic.pdf`.
-3. Open Claude Code and say: "Joy, ingest the new document in the inbox."
-4. Joy will read it, write a source summary to `Vault/sources/`, create or update any relevant concept articles in `Vault/concepts/`, update `Vault/_index.md`, and then move the processed file to `Knowledge/Archive/`.
+1. Copia o mueve el documento a esta carpeta.
+2. Renómbralo con un slug descriptivo en minúsculas y con la fecha, por ejemplo: `2026-06-notas-reunion-estrategia.md` o `2026-07-paper-investigacion-tema.pdf`.
+3. Abre Claude Code y di: "Joy, ingiere el documento nuevo del inbox."
+4. Joy lo va a leer, va a escribir un resumen de fuente en `Vault/sources/`, va a crear o actualizar los artículos de concepto relevantes en `Vault/concepts/`, va a actualizar `Vault/_index.md`, y después va a mover el archivo procesado a `Knowledge/Archive/`.
 
-## Supported Document Types
+## Tipos de documento soportados
 
-Any file Claude Code can read: `.md`, `.txt`, `.pdf`, and other text-based formats.
+Cualquier archivo que Claude Code pueda leer: `.md`, `.txt`, `.pdf`, y otros formatos basados en texto.
 
-## Important
+## Importante
 
-- This folder is a staging area. After ingestion, Joy automatically moves the processed file to `Knowledge/Archive/`, which is the permanent raw record.
-- Files are never deleted, only archived. A clean inbox means everything has been processed.
-- If a document is sensitive, consider whether you want it in a shared workspace.
+- Esta carpeta es un área de espera. Después del ingest, Joy mueve automáticamente el archivo procesado a `Knowledge/Archive/`, que es el registro crudo permanente.
+- Los archivos nunca se borran, solo se archivan. Un inbox limpio significa que todo ya fue procesado.
+- Si un documento es sensible, considera si de verdad quieres tenerlo en un workspace compartido.
 
-## File Naming Convention
+## Convención de nombres de archivo
 
 ```
-[YYYY-MM-DD]-[descriptive-slug].[ext]
+[YYYY-MM-DD]-[slug-descriptivo].[ext]
 ```
 
-Examples:
-- `2026-06-15-project-kickoff-notes.md`
-- `2026-07-01-industry-report-q2.pdf`
-- `2026-08-10-team-retrospective.txt`
+Ejemplos:
+- `2026-06-15-notas-arranque-proyecto.md`
+- `2026-07-01-reporte-industria-q2.pdf`
+- `2026-08-10-retrospectiva-equipo.txt`
