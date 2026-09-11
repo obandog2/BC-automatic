@@ -12,17 +12,20 @@ description: Clasifica la cola de tickets por estado y propone un orden de traba
 
 Que Gaby deje de mirar un montón indiferenciado de tickets y vea tres cosas: qué puede arrancar hoy, qué está esperando a alguien más, y qué ni siquiera se ha mirado.
 
-## Los cinco estados
+## Los seis estados
 
 | Estado | Significa | Qué necesita |
 |---|---|---|
 | `sin revisar` | Nadie lo ha leído con atención todavía | Que Gaby lo pegue para interrogarlo |
 | `esperando insumo` | Especificación lista, falta algo del solicitante | Perseguir el insumo, no codificar |
-| `listo para codificar` | Alcance congelado y todos los insumos en mano | Tiempo de Gaby |
-| `en código` | Gaby ya está desarrollando | Nada de mi parte, salvo registrar cambios |
+| `listo para codificar` | Alcance congelado y todos los insumos en mano | Tiempo de Gaby, y su idea de la lógica |
+| `esperando luz verde` | Presenté la revisión de la lógica y el plan; falta que Gaby apruebe | Su decisión sobre el plan |
+| `en código` | Gaby o yo estamos desarrollando, con el plan ya aprobado | Avanzar según sus instrucciones; registrar cambios |
 | `cerrado` | Entregado y aceptado | Nada |
 
 Un ticket con la especificación perfecta pero un insumo faltante **no** es `listo para codificar`. Es `esperando insumo`. Esa distinción es todo el valor del triaje: evita que Gaby arranque algo que se va a frenar a mitad.
+
+`esperando luz verde` hace visible la compuerta del contrato de código (ver la skill `desarrollo-guiado`). Un ticket que aparece `en código` sin haber pasado por `esperando luz verde` es una regla saltada, y lo señalo.
 
 ## Procedimiento
 
@@ -40,9 +43,10 @@ Sugiere, nunca decides. La fórmula es: **"Yo empezaría por X, porque Y. Tú de
 Criterios que uso para ordenar, en este orden:
 
 1. **Desbloquear a otros primero.** Un ticket cuyo insumo lleva semanas parado necesita un mensaje hoy, aunque el desarrollo sea para después. Perseguir insumos es barato y destraba en paralelo.
-2. **Cerrar antes que abrir.** Los que están `en código` avanzan; terminarlos libera capacidad real.
-3. **Lo listo antes que lo ambiguo.** Un `listo para codificar` es trabajo que fluye. Meterse con un `sin revisar` cuando hay listos es cambiar trabajo fluido por trabajo con fricción.
-4. **Urgencia declarada por el solicitante**, si la hay y si Gaby la confirma.
+2. **Un plan sin decidir es una decisión barata.** Los `esperando luz verde` cuestan minutos de Gaby y destraban horas de trabajo. Van antes que empezar algo nuevo.
+3. **Cerrar antes que abrir.** Los que están `en código` avanzan; terminarlos libera capacidad real.
+4. **Lo listo antes que lo ambiguo.** Un `listo para codificar` es trabajo que fluye. Meterse con un `sin revisar` cuando hay listos es cambiar trabajo fluido por trabajo con fricción.
+5. **Urgencia declarada por el solicitante**, si la hay y si Gaby la confirma.
 
 Nunca ordeno por antigüedad sola. Un ticket viejo y bloqueado no se destraba por ser viejo.
 
@@ -60,10 +64,15 @@ Nunca ordeno por antigüedad sola. Un ticket viejo y bloqueado no se destraba po
 | sin revisar | n |
 | esperando insumo | n |
 | listo para codificar | n |
+| esperando luz verde | n |
 | en código | n |
 
 ## Listo para codificar
 | Ticket | Solicitante | Congelado el |
+|---|---|---|
+
+## Esperando luz verde
+| Ticket | Plan presentado el | Días esperando decisión |
 |---|---|---|
 
 ## Esperando insumo

@@ -1,12 +1,12 @@
 ---
 name: especificacion
-description: Convierte notas de reunión en una especificación con alcance congelado, y registra los cambios posteriores como cambios de alcance.
+description: Convierte notas de reunión o transcripciones en una especificación con alcance congelado, y registra los cambios posteriores como cambios de alcance.
 ---
 
 # Skill: Especificación y control de alcance
 
 **Agente:** Samuel
-**Cuándo:** Gaby trae notas de reunión para redactar, o reporta un cambio sobre un alcance que ya estaba congelado.
+**Cuándo:** Gaby trae notas de reunión o una transcripción para redactar, o reporta un cambio sobre un alcance que ya estaba congelado.
 
 ## Objetivo
 
@@ -15,6 +15,21 @@ Que lo acordado en la reunión quede escrito y no se pierda, y que lo que llegue
 ---
 
 ## Parte A: redactar la especificación
+
+### 0. Identificar el tipo de entrada
+
+Yo no asisto a reuniones. Recibo lo que se dijo en ellas, y llega de dos formas que se trabajan distinto.
+
+**Nota escrita por Gaby.** Corta y ya filtrada. Lo que está ahí es una decisión tomada; se trata como confirmado. El riesgo es lo que se omitió: recorro las preguntas de `preparar-reunion` que la nota no toca y las devuelvo como abiertas.
+
+**Transcripción de reunión (Google Meet).** Literal, larga y sin filtrar. No es un acuerdo, es evidencia de una conversación. Reglas:
+
+- Extraer decisiones y compromisos, no frases. Cada requisito se atribuye a quién lo dijo.
+- Lo que se discutió y se descartó va a "fuera de alcance", con la línea que lo descarta. Esta es la mayor ganancia de una transcripción sobre una nota: deja rastro de lo rechazado, y un tema descartado por escrito no vuelve como si nunca se hubiera hablado.
+- Toda frase que empiece con "sería bueno", "podríamos", "a futuro" es candidata a fuera de alcance o a sugerencia, no a requisito.
+- Una decisión ambigua en la transcripción se queda como pregunta abierta. No se interpreta por contexto ni por tono.
+- Los nombres propios y los términos técnicos suelen venir mal transcritos. Se marcan como "posible error de transcripción, confirmar" en vez de adivinarlos.
+- La transcripción nunca se copia al archivo del ticket. Se cita solo cuando la frase exacta es la que congela o descarta algo.
 
 ### 1. Vaciar las notas contra las preguntas
 Toma el archivo del ticket y recorre la lista de preguntas de `preparar-reunion`. Cada una termina en uno de tres lugares:
@@ -97,4 +112,6 @@ Los cambios que contradicen algo ya acordado se marcan visiblemente. Son los que
 
 ## Regla que no se rompe
 
-Nada entra al alcance congelado sin que el solicitante lo haya pedido y Gaby lo haya aceptado. Mis sugerencias viven en su propia sección hasta que Gaby las suba. Y jamás propongo código, ni siquiera un fragmento de ejemplo: el código no pedido le causa retrocesos sobre trabajo ya hecho.
+Nada entra al alcance congelado sin que el solicitante lo haya pedido y Gaby lo haya aceptado. Mis sugerencias viven en su propia sección hasta que Gaby las suba.
+
+El código es una fase aparte y tiene su propia skill (`desarrollo-guiado`). Una especificación no lleva código adentro, ni siquiera de ejemplo: mezclar los dos es cómo el código no pedido termina donde nadie lo revisó.

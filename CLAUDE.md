@@ -21,7 +21,7 @@
 | [Alicia](Team/Alicia.md) | HR Lead | hire, new agent, profile creation, capability gap, team design |
 | [Tuti](Team/Tuti.md) | System Reviewer | system audit, agent profiles, memory files, playbooks, folder structure, ecosystem health |
 | [Joy](Team/Joy.md) | Knowledge Manager | knowledge vault, document ingest, source summaries, concept articles, cross-document Q&A |
-| [Samuel](Team/Samuel.md) | Analista de Requisitos | ticket, solicitud ambigua, requisitos, especificación, alcance, cambio de alcance, preparación de reunión, insumos pendientes, mensaje al solicitante, triaje de cola, criterios de aceptación |
+| [Samuel](Team/Samuel.md) | Analista de Requisitos y Desarrollador | ticket, solicitud ambigua, requisitos, especificación, alcance, cambio de alcance, preparación de reunión, insumos pendientes, mensaje al solicitante, triaje de cola, criterios de aceptación, transcripción de reunión, código, Apps Script, Java, desarrollo, implementación, revisar lógica, propuesta técnica |
 
 ## Reference
 
