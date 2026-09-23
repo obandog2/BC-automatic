@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operations Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+  <style>
+    :root {
+      --blue: #0066cc;
+      --blue-dark: #004c99;
+      --ink: #17252d;
+      --muted: #647681;
+      --bg: #f3f7f9;
+      --surface: #ffffff;
+      --border: #d7e2e7;
+      --green: #158047;
+      --orange: #b97800;
+      --purple: #6f42c1;
+      --red: #c9342b;
+      --gray: #84939b;
+      --shadow: 0 8px 24px rgba(23, 37, 45, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    button, input, select { font: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(0, 102, 204, 0.2);
+      outline-offset: 2px;
+    }
+    .is-hidden { display: none !important; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 28px;
+      background: linear-gradient(115deg, #ffffff 0%, #edf6fb 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-kicker {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+    .topbar h1 { margin: 0; font-size: clamp(20px, 2vw, 28px); }
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
+    .updated { color: var(--muted); font-size: 12px; text-align: right; }
+    .updated strong { display: block; margin-top: 3px; color: var(--ink); }
+
+    .button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 16px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .button:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .button.secondary { background: var(--purple); }
+
+    .nav {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 0 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-btn {
+      position: relative;
+      flex: 0 0 auto;
+      border: 0;
+      padding: 16px 18px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .nav-btn:hover { color: var(--blue); background: #f8fbfd; }
+    .nav-btn.active { color: var(--blue); }
+    .nav-btn.active::after {
+      position: absolute;
+      right: 12px;
+      bottom: 0;
+      left: 12px;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--blue);
+      content: "";
+    }
+
+    .main { width: min(1600px, 100%); margin: 0 auto; padding: 22px; }
+    .card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .card h2, .card h3 { margin-top: 0; }
+
+    .filter-section {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      color: #435761;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .ts-control {
+      min-height: 38px !important;
+      border-color: var(--border) !important;
+      border-radius: 8px !important;
+      font-size: 12px !important;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 14px 18px;
+      border-left: 5px solid var(--blue);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #eef6fc, #e4eef3);
+      color: #174f7f;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .savings-insights {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .saving-card {
+      min-height: 100px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(145deg, #fff, #f8fbfd);
+      box-shadow: var(--shadow);
+    }
+    .saving-card.primary {
+      border: 0;
+      background: linear-gradient(135deg, #553098, #8060c1);
+      color: #fff;
+    }
+    .saving-card small {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .saving-card.primary small { color: #eee8f8; }
+    .saving-card strong { display: block; font-size: 22px; line-height: 1.15; }
+    .saving-card span { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .saving-card.primary span { color: #e8ddf7; }
+    .quality-ok { color: var(--green); }
+    .quality-warning { color: var(--orange); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .kpi-grid.grid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .kpi-card { min-height: 115px; }
+    .kpi-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .kpi-value { margin-top: 12px; font-size: clamp(22px, 2.3vw, 30px); font-weight: 800; }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .chart-grid.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .chart-wrap { position: relative; height: 275px; margin-top: 14px; }
+    .chart-title { margin: 0; font-size: 15px; }
+
+    .table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .table-head h3 { margin: 0; }
+    .table-scroll { max-height: 430px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 12px;
+      background: #edf3f6;
+      color: #435761;
+      white-space: nowrap;
+    }
+    td { padding: 11px 12px; border-top: 1px solid #e9eff2; vertical-align: top; }
+    tbody tr:hover { background: #f8fcfe; }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .badge-green { background: #e3f3e9; color: var(--green); }
+    .badge-orange { background: #fff2d9; color: var(--orange); }
+    .badge-blue { background: #e4f0fb; color: var(--blue); }
+    .badge-gray { background: #edf1f3; color: #647681; }
+
+    .search-box { display: flex; gap: 10px; margin: 20px 0; }
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fff;
+    }
+    .empty { padding: 28px !important; color: var(--muted); text-align: center; }
+    .contact-link {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--blue);
+      font-weight: 750;
+      text-align: center;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 15px;
+      border: 4px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1180px) {
+      .filter-section, .kpi-grid, .kpi-grid.grid-6 { grid-template-columns: repeat(3, 1fr); }
+      .chart-grid, .chart-grid.grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .savings-insights { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .topbar { align-items: flex-start; padding: 16px; }
+      .topbar-actions { align-items: flex-end; flex-direction: column; }
+      .main { padding: 14px; }
+      .nav { padding: 0 8px; }
+      .filter-section, .kpi-grid, .kpi-grid.grid-6,
+      .chart-grid, .chart-grid.grid-4, .savings-insights { grid-template-columns: 1fr; }
+      .search-box { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <span class="brand-kicker">Business Center</span>
+      <h1>Operations Dashboard</h1>
+    </div>
+    <div class="topbar-actions">
+      <div class="updated">Última actualización<strong id="lblUpdate">Cargando</strong></div>
+      <button class="button" type="button" onclick="forceUpdate()">Actualizar datos</button>
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="Vistas del dashboard">
+    <button class="nav-btn active" type="button" data-view="status">Estado de mi solicitud</button>
+    <button class="nav-btn" type="button" data-view="general">Vista general</button>
+    <button class="nav-btn" type="button" data-view="automatizaciones">Automatizaciones</button>
+    <button class="nav-btn" type="button" data-view="eventos">Eventos internos</button>
+    <button class="nav-btn" type="button" data-view="ordenes">Órdenes de compra</button>
+  </nav>
+
+  <main class="main">
+    <section id="filterSection" class="filter-section is-hidden" aria-label="Filtros">
+      <label class="filter-field">Año<select id="filtAnio"></select></label>
+      <label class="filter-field">Mes<select id="filtMes"></select></label>
+      <label class="filter-field">País<select id="filtPais"></select></label>
+      <label class="filter-field">Área solicitante<select id="filtArea"></select></label>
+      <label class="filter-field">Estado<select id="filtEstado"></select></label>
+    </section>
+
+    <div id="notice" class="notice is-hidden"></div>
+
+    <section id="savingsInsights" class="savings-insights is-hidden" aria-label="Resumen de ahorro">
+      <article class="saving-card primary">
+        <small>Ahorro semanal exacto</small>
+        <strong id="savingWeekly">0,00 h</strong>
+        <span id="savingScope">Total de la fuente</span>
+      </article>
+      <article class="saving-card">
+        <small>Proyección anual a 52 semanas</small>
+        <strong id="savingAnnual">0,00 h</strong>
+        <span>Ritmo anual equivalente</span>
+      </article>
+      <article class="saving-card">
+        <small>Equivalente anual</small>
+        <strong id="savingDays">0,00 jornadas</strong>
+        <span>Jornadas estimadas de 8 horas</span>
+      </article>
+      <article class="saving-card">
+        <small>Calidad de lectura</small>
+        <strong id="savingQuality">Sin auditar</strong>
+        <span id="savingQualityDetail">Actualiza el caché</span>
+      </article>
+    </section>
+
+    <section id="dashboardView" class="is-hidden">
+      <div id="mainKpiGrid" class="kpi-grid">
+        <article class="card kpi-card"><div class="kpi-label">Solicitudes activas</div><div id="kpiTotal" class="kpi-value">0</div></article>
+        <article class="card kpi-card"><div class="kpi-label">Nuevas</div><div id="kpiOpen" class="kpi-value" style="color:var(--blue)">0</div></article>
+        <article class="card kpi-card"><div class="kpi-label">En proceso</div><div id="kpiProcess" class="kpi-value" style="color:var(--orange)">0</div></article>
+        <article class="card kpi-card"><div class="kpi-label">Procesadas</div><div id="kpiClosed" class="kpi-value" style="color:var(--green)">0</div></article>
+        <article class="card kpi-card"><div id="kpiSavingsLabel" class="kpi-label">Ahorro registrado</div><div id="kpiSavings" class="kpi-value" style="color:var(--purple)">0,00 h</div></article>
+        <article id="kpiProjectionCard" class="card kpi-card is-hidden"><div id="kpiProjectionLabel" class="kpi-label">Proyección al cierre</div><div id="kpiProjection" class="kpi-value" style="color:var(--green)">0,00 h</div></article>
+      </div>
+
+      <div id="mainChartGrid" class="chart-grid">
+        <article class="card">
+          <h3 class="chart-title">Distribución por estado</h3>
+          <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+        </article>
+        <article class="card">
+          <h3 id="chartSecondaryTitle" class="chart-title">Top áreas solicitantes</h3>
+          <div class="chart-wrap"><canvas id="chartSecondary"></canvas></div>
+        </article>
+        <article class="card">
+          <h3 id="chartSavingsTitle" class="chart-title">Ahorro por área</h3>
+          <div class="chart-wrap"><canvas id="chartSavings"></canvas></div>
+        </article>
+        <article id="cardFourthChart" class="card is-hidden">
+          <h3 id="chartFourthTitle" class="chart-title">Proyección al cierre</h3>
+          <div class="chart-wrap"><canvas id="chartFourth"></canvas></div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="table-head"><h3>Detalle de operaciones</h3><span id="resultCount" class="updated"></span></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>ID</th><th>Fecha</th><th>Solicitante</th><th>Servicio</th><th>País</th><th>Área</th><th>Estado</th><th>Ahorro</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="statusView">
+      <article class="card">
+        <h2 style="color:var(--purple)">Rastreador de solicitudes</h2>
+        <p style="color:var(--muted);font-size:13px">Ingresa el ID del elemento, correo o nombre del solicitante.</p>
+        <div class="search-box">
+          <input id="txtSearch" type="search" placeholder="Ejemplo: BCAT-0333 o nombre@empresa.com" autocomplete="off">
+          <button class="button secondary" type="button" onclick="executeSearch()">Buscar</button>
+        </div>
+        <div class="table-scroll" style="max-height:520px">
+          <table>
+            <thead><tr><th>ID</th><th>Fecha</th><th>Solicitante</th><th>Servicio requerido</th><th>Estado</th><th>Responsable</th></tr></thead>
+            <tbody id="searchBody"><tr><td colspan="6" class="empty">Realiza una búsqueda para consultar tus solicitudes.</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="loader" class="loader" role="status" aria-live="polite">
+    <div class="spinner"></div>
+    <div id="loaderText">Conectando con el caché seguro</div>
+  </div>
+
+  <script>
+    let db = null;
+    let currentView = 'status';
+    const charts = {};
+
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    function initApp() {
+      document.querySelectorAll('.nav-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          selectView(button.dataset.view);
+        });
+      });
+
+      document.getElementById('txtSearch').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') executeSearch();
+      });
+
+      google.script.run
+        .withSuccessHandler(handleDataResponse)
+        .withFailureHandler(handleDataError)
+        .fetchDashboardDataFromCache();
+    }
+
+    function selectView(view) {
+      currentView = view;
+      document.querySelectorAll('.nav-btn').forEach(function(button) {
+        button.classList.toggle('active', button.dataset.view === view);
+      });
+
+      const isStatus = view === 'status';
+      document.getElementById('statusView').classList.toggle('is-hidden', !isStatus);
+      document.getElementById('dashboardView').classList.toggle('is-hidden', isStatus);
+      document.getElementById('filterSection').classList.toggle('is-hidden', isStatus);
+
+      if (isStatus) {
+        document.getElementById('notice').classList.add('is-hidden');
+        document.getElementById('savingsInsights').classList.add('is-hidden');
+        setTimeout(function() { document.getElementById('txtSearch').focus(); }, 50);
+      } else {
+        renderDashboard();
+      }
+    }
+
+    function forceUpdate() {
+      showLoader('Actualizando las fuentes y regenerando el caché');
+      google.script.run
+        .withSuccessHandler(function(response) {
+          handleDataResponse(response);
+          if (currentView === 'status' && document.getElementById('txtSearch').value.trim()) {
+            executeSearch();
+          }
+        })
+        .withFailureHandler(handleDataError)
+        .updateDashboardData();
+    }
+
+    function handleDataResponse(response) {
+      try {
+        const data = typeof response === 'string' ? JSON.parse(response) : response;
+        if (!data || data.error) {
+          showLoader(data && data.error ? data.error : 'La respuesta del servidor está vacía.', true);
+          return;
+        }
+
+        db = data;
+        document.getElementById('lblUpdate').textContent = db.lastUpdate || 'Sin fecha';
+        initSelect('filtAnio', db.filtros && db.filtros.anios);
+        initSelect('filtMes', db.filtros && db.filtros.meses, formatMonth_);
+        initSelect('filtPais', db.filtros && db.filtros.paises);
+        initSelect('filtArea', db.filtros && db.filtros.areas);
+        initSelect('filtEstado', db.filtros && db.filtros.estados);
+        hideLoader();
+
+        if (currentView !== 'status') renderDashboard();
+      } catch (error) {
+        showLoader('No fue posible interpretar los datos: ' + error.message, true);
+      }
+    }
+
+    function handleDataError(error) {
+      showLoader('Error del servidor: ' + (error && error.message ? error.message : error), true);
+    }
+
+    function showLoader(message, isError) {
+      const loader = document.getElementById('loader');
+      const text = document.getElementById('loaderText');
+      text.textContent = message;
+      text.style.color = isError ? 'var(--red)' : 'var(--blue)';
+      loader.classList.remove('is-hidden');
+    }
+
+    function hideLoader() {
+      document.getElementById('loader').classList.add('is-hidden');
+    }
+
+    function initSelect(id, options, labelFormatter) {
+      const element = document.getElementById(id);
+      if (element.tomselect) element.tomselect.destroy();
+      element.innerHTML = '';
+      element.appendChild(new Option('Todos', ''));
+      (options || []).forEach(function(option) {
+        const value = String(option);
+        element.appendChild(new Option(labelFormatter ? labelFormatter(value) : value, value));
+      });
+      new TomSelect(element, {
+        create: false,
+        maxItems: 1,
+        allowEmptyOption: true,
+        onChange: renderDashboard
+      });
+    }
+
+    function getFilteredData_() {
+      const source = Array.isArray(db && db[currentView]) ? db[currentView] : [];
+      const filters = {
+        anio: document.getElementById('filtAnio').value,
+        mes: document.getElementById('filtMes').value,
+        pais: document.getElementById('filtPais').value,
+        area: document.getElementById('filtArea').value,
+        estado: document.getElementById('filtEstado').value
+      };
+
+      return source.filter(function(row) {
+        return (!filters.anio || String(row.anio) === filters.anio) &&
+          (!filters.mes || String(row.mes) === filters.mes) &&
+          (!filters.pais || row.pais === filters.pais) &&
+          (!filters.area || row.area === filters.area) &&
+          (!filters.estado || row.estado === filters.estado);
+      });
+    }
+
+    function hasActiveFilters() {
+      return ['filtAnio', 'filtMes', 'filtPais', 'filtArea', 'filtEstado'].some(function(id) {
+        return document.getElementById(id).value !== '';
+      });
+    }
+
+    function renderDashboard() {
+      if (!db || currentView === 'status') return;
+
+      const data = getFilteredData_();
+      const filtersActive = hasActiveFilters();
+      const activeData = data.filter(function(row) {
+        return normalizeTextClient_(row.estado) !== 'cancelada';
+      });
+      const newCount = activeData.filter(function(row) { return normalizeTextClient_(row.estado) === 'nueva'; }).length;
+      const closedCount = activeData.filter(function(row) { return normalizeTextClient_(row.estado) === 'procesada'; }).length;
+      const processCount = Math.max(0, activeData.length - newCount - closedCount);
+      const uniqueSavings = buildUniqueSavings_(data);
+
+      let totalSavings;
+      if (currentView === 'automatizaciones' && !filtersActive) {
+        totalSavings = Number(db.totalAhorroDirectoAuto) || 0;
+      } else {
+        totalSavings = Object.keys(uniqueSavings).reduce(function(sum, id) {
+          return sum + Number(uniqueSavings[id].value || 0);
+        }, 0);
+      }
+
+      document.getElementById('kpiTotal').textContent = formatInteger_(activeData.length);
+      document.getElementById('kpiOpen').textContent = formatInteger_(newCount);
+      document.getElementById('kpiProcess').textContent = formatInteger_(processCount);
+      document.getElementById('kpiClosed').textContent = formatInteger_(closedCount);
+      document.getElementById('kpiSavings').textContent = formatHours_(totalSavings);
+      document.getElementById('kpiSavingsLabel').textContent = currentView === 'automatizaciones'
+        ? 'Ahorro semanal exacto'
+        : 'Ahorro registrado';
+      document.getElementById('resultCount').textContent = formatInteger_(data.length) + ' registros';
+
+      renderNotice_();
+      renderSavingsInsights_(totalSavings, filtersActive);
+      renderProjection_(totalSavings);
+      renderOperationsTable_(data);
+      drawStatusChart_(data);
+      drawSecondaryChart_(data);
+
+      const chartGrid = document.getElementById('mainChartGrid');
+      const fourthCard = document.getElementById('cardFourthChart');
+      if (currentView === 'automatizaciones') {
+        chartGrid.classList.add('grid-4');
+        fourthCard.classList.remove('is-hidden');
+        document.getElementById('chartSavingsTitle').textContent = filtersActive
+          ? 'Ahorro de la selección por área'
+          : 'Ahorro exacto de la fuente por área';
+        if (filtersActive) {
+          drawSavingsChart_(uniqueSavings);
+        } else {
+          drawExactAreaSavings_(db.areaSavingsAuto || {});
+        }
+        drawProjectionChart_(totalSavings);
+      } else {
+        chartGrid.classList.remove('grid-4');
+        fourthCard.classList.add('is-hidden');
+        document.getElementById('chartSavingsTitle').textContent = 'Ahorro registrado por área';
+        drawSavingsChart_(uniqueSavings);
+        destroyChart_('fourth');
+      }
+    }
+
+    function renderNotice_() {
+      const notice = document.getElementById('notice');
+      if (currentView === 'automatizaciones') {
+        notice.textContent = 'Las horas de automatización representan ahorro semanal recurrente. El total sin filtros se toma directamente de la fuente histórica y conserva ajustes positivos o negativos.';
+        notice.classList.remove('is-hidden');
+      } else if (currentView === 'general') {
+        notice.textContent = 'La vista general reúne servicios con naturalezas distintas. Automatizaciones refleja ahorro recurrente; órdenes y eventos pueden representar impactos únicos.';
+        notice.classList.remove('is-hidden');
+      } else {
+        notice.classList.add('is-hidden');
+      }
+    }
+
+    function renderSavingsInsights_(weeklySavings, filtered) {
+      const panel = document.getElementById('savingsInsights');
+      if (currentView !== 'automatizaciones') {
+        panel.classList.add('is-hidden');
+        return;
+      }
+      panel.classList.remove('is-hidden');
+
+      document.getElementById('savingWeekly').textContent = formatHours_(weeklySavings);
+      document.getElementById('savingScope').textContent = filtered ? 'Resultado de los filtros activos' : 'Total exacto de la fuente';
+      document.getElementById('savingAnnual').textContent = formatHours_(weeklySavings * 52);
+      document.getElementById('savingDays').textContent = formatNumber_(weeklySavings * 52 / 8) + ' jornadas';
+
+      const audit = db.savingsAudit && db.savingsAudit.automatizaciones;
+      const quality = document.getElementById('savingQuality');
+      const detail = document.getElementById('savingQualityDetail');
+      quality.className = '';
+
+      if (!audit) {
+        quality.textContent = 'Pendiente';
+        quality.classList.add('quality-warning');
+        detail.textContent = 'Regenera el caché con el backend nuevo';
+      } else if (audit.filasInvalidas === 0) {
+        quality.textContent = 'Lectura completa';
+        quality.classList.add('quality-ok');
+        detail.textContent = audit.filasLeidas + ' de ' + audit.filasConValor + ' filas válidas';
+      } else {
+        quality.textContent = 'Requiere revisión';
+        quality.classList.add('quality-warning');
+        detail.textContent = audit.filasInvalidas + ' valores no reconocidos';
+      }
+    }
+
+    function renderProjection_(weeklySavings) {
+      const grid = document.getElementById('mainKpiGrid');
+      const card = document.getElementById('kpiProjectionCard');
+      if (currentView !== 'automatizaciones') {
+        grid.classList.remove('grid-6');
+        card.classList.add('is-hidden');
+        return;
+      }
+
+      const today = new Date();
+      const endOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59);
+      const remainingWeeks = Math.max(0, (endOfYear.getTime() - today.getTime()) / 604800000);
+      document.getElementById('kpiProjectionLabel').textContent = 'Proyección restante ' + today.getFullYear();
+      document.getElementById('kpiProjection').textContent = formatHours_(weeklySavings * remainingWeeks);
+      grid.classList.add('grid-6');
+      card.classList.remove('is-hidden');
+    }
+
+    function buildUniqueSavings_(data) {
+      const map = {};
+      data.forEach(function(row) {
+        const id = String(row.id || '').trim().toLowerCase();
+        const value = Number(row.ahorro);
+        if (id && Number.isFinite(value) && value !== 0) {
+          map[id] = { value: value, area: row.area || row.tipo || 'Sin Especificar' };
+        }
+      });
+      return map;
+    }
+
+    function renderOperationsTable_(data) {
+      const html = data.slice(0, 250).map(function(row) {
+        return '<tr>' +
+          '<td><strong>' + escapeHtml_(row.id) + '</strong></td>' +
+          '<td>' + escapeHtml_(row.fecha) + '</td>' +
+          '<td>' + escapeHtml_(row.solicitante) + '</td>' +
+          '<td><span class="badge badge-blue">' + escapeHtml_(row.tipo) + '</span></td>' +
+          '<td>' + escapeHtml_(row.pais) + '</td>' +
+          '<td>' + escapeHtml_(row.area) + '</td>' +
+          '<td>' + statusBadge_(row.estado) + '</td>' +
+          '<td style="color:var(--purple);font-weight:750">' + (Number(row.ahorro) !== 0 ? formatHours_(row.ahorro) : '-') + '</td>' +
+          '</tr>';
+      }).join('');
+
+      document.getElementById('tableBody').innerHTML = html ||
+        '<tr><td colspan="8" class="empty">No existen datos para los filtros seleccionados.</td></tr>';
+    }
+
+    function statusBadge_(status) {
+      const normalized = normalizeTextClient_(status);
+      let className = 'badge-orange';
+      if (normalized === 'cancelada') className = 'badge-gray';
+      if (normalized === 'procesada') className = 'badge-green';
+      if (normalized === 'nueva') className = 'badge-blue';
+      return '<span class="badge ' + className + '">' + escapeHtml_(status || 'En Proceso') + '</span>';
+    }
+
+    function drawStatusChart_(data) {
+      const counts = {};
+      data.forEach(function(row) {
+        const status = row.estado || 'Sin estado';
+        counts[status] = (counts[status] || 0) + 1;
+      });
+      const sorted = Object.keys(counts).map(function(key) {
+        return { key: key, value: counts[key] };
+      }).sort(function(a, b) { return b.value - a.value; });
+
+      destroyChart_('status');
+      charts.status = new Chart(document.getElementById('chartStatus'), {
+        type: 'doughnut',
+        data: {
+          labels: sorted.map(function(item) { return item.key; }),
+          datasets: [{
+            data: sorted.map(function(item) { return item.value; }),
+            backgroundColor: ['#0066cc', '#d79b00', '#159447', '#84939b', '#6f42c1', '#126b80'],
+            borderWidth: 1
+          }]
+        },
+        options: chartOptions_('right', true)
+      });
+    }
+
+    function drawSecondaryChart_(data) {
+      const counts = {};
+      data.forEach(function(row) {
+        const key = currentView === 'general' ? row.tipo : row.area;
+        if (!key || key === 'N/A') return;
+        counts[key] = (counts[key] || 0) + 1;
+      });
+      const sorted = topEntries_(counts, 10);
+      document.getElementById('chartSecondaryTitle').textContent = currentView === 'general'
+        ? 'Volumen por servicio'
+        : 'Top áreas solicitantes';
+
+      destroyChart_('secondary');
+      charts.secondary = new Chart(document.getElementById('chartSecondary'), {
+        type: 'bar',
+        data: {
+          labels: sorted.map(function(item) { return item.key; }),
+          datasets: [{ label: 'Solicitudes', data: sorted.map(function(item) { return item.value; }), backgroundColor: '#0066cc', borderRadius: 5 }]
+        },
+        options: chartOptions_('top', false, currentView !== 'general')
+      });
+    }
+
+    function drawExactAreaSavings_(areaData) {
+      const sorted = topEntries_(areaData, 10);
+      drawSavingsBar_(sorted);
+    }
+
+    function drawSavingsChart_(uniqueSavings) {
+      const areaTotals = {};
+      Object.keys(uniqueSavings).forEach(function(id) {
+        const item = uniqueSavings[id];
+        const area = item.area || 'Sin Especificar';
+        areaTotals[area] = (areaTotals[area] || 0) + Number(item.value || 0);
+      });
+      drawSavingsBar_(topEntries_(areaTotals, 10));
+    }
+
+    function drawSavingsBar_(sorted) {
+      destroyChart_('savings');
+      charts.savings = new Chart(document.getElementById('chartSavings'), {
+        type: 'bar',
+        data: {
+          labels: sorted.map(function(item) { return item.key; }),
+          datasets: [{ label: 'Horas', data: sorted.map(function(item) { return item.value; }), backgroundColor: '#6f42c1', borderRadius: 5 }]
+        },
+        options: chartOptions_('top', false, true, true)
+      });
+    }
+
+    function drawProjectionChart_(weeklySavings) {
+      const today = new Date();
+      const endOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59);
+      const remainingWeeks = Math.max(0, (endOfYear.getTime() - today.getTime()) / 604800000);
+      const projected = weeklySavings * remainingWeeks;
+      document.getElementById('chartFourthTitle').textContent = 'Proyección restante ' + today.getFullYear();
+
+      destroyChart_('fourth');
+      charts.fourth = new Chart(document.getElementById('chartFourth'), {
+        type: 'bar',
+        data: {
+          labels: ['Ahorro semanal', 'Resto del año'],
+          datasets: [{ data: [weeklySavings, projected], backgroundColor: ['#6f42c1', '#159447'], borderRadius: 5 }]
+        },
+        options: chartOptions_('top', false, false, true)
+      });
+    }
+
+    function chartOptions_(legendPosition, showLegend, horizontal, hoursTooltip) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: horizontal ? 'y' : 'x',
+        plugins: {
+          legend: { display: showLegend, position: legendPosition, labels: { boxWidth: 10, font: { size: 10 } } },
+          tooltip: hoursTooltip ? {
+            callbacks: { label: function(context) { return formatHours_(context.raw); } }
+          } : {}
+        },
+        scales: horizontal ? { x: { beginAtZero: true } } : { y: { beginAtZero: true } }
+      };
+    }
+
+    function destroyChart_(name) {
+      if (charts[name]) {
+        charts[name].destroy();
+        charts[name] = null;
+      }
+    }
+
+    function topEntries_(object, limit) {
+      return Object.keys(object || {}).map(function(key) {
+        return { key: key, value: Number(object[key]) || 0 };
+      }).sort(function(a, b) {
+        return b.value - a.value;
+      }).slice(0, limit);
+    }
+
+    function executeSearch() {
+      const body = document.getElementById('searchBody');
+      if (!db) return;
+      const query = normalizeTextClient_(document.getElementById('txtSearch').value);
+      if (query.length < 3) {
+        body.innerHTML = '<tr><td colspan="6" class="empty">Ingresa al menos tres caracteres.</td></tr>';
+        return;
+      }
+
+      const results = (db.general || []).filter(function(row) {
+        return normalizeTextClient_(row.id).includes(query) ||
+          normalizeTextClient_(row.solicitante).includes(query) ||
+          normalizeTextClient_(row.nombre).includes(query);
+      }).sort(function(a, b) {
+        return String(b.id).localeCompare(String(a.id));
+      });
+
+      if (!results.length) {
+        body.innerHTML = '<tr><td colspan="6" class="empty">No se encontraron solicitudes.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = results.slice(0, 100).map(function(row) {
+        const subject = encodeURIComponent('Consulta sobre solicitud ' + row.id);
+        const contact = row.responsable && row.responsable !== 'Sin Asignar'
+          ? '<a class="contact-link" href="mailto:?subject=' + subject + '">Contactar</a>'
+          : '';
+        return '<tr>' +
+          '<td><strong style="color:var(--blue)">' + escapeHtml_(row.id) + '</strong></td>' +
+          '<td>' + escapeHtml_(row.fecha) + '</td>' +
+          '<td>' + escapeHtml_(row.solicitante) + '</td>' +
+          '<td><span class="badge badge-blue">' + escapeHtml_(row.tipo) + '</span><br><small>' + escapeHtml_(row.nombre) + '</small></td>' +
+          '<td>' + statusBadge_(row.estado) + '</td>' +
+          '<td><strong>' + escapeHtml_(row.responsable || 'Sin Asignar') + '</strong><br>' + contact + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    function formatNumber_(value) {
+      return new Intl.NumberFormat('es-UY', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(Number(value) || 0);
+    }
+
+    function formatInteger_(value) {
+      return new Intl.NumberFormat('es-UY', { maximumFractionDigits: 0 }).format(Number(value) || 0);
+    }
+
+    function formatHours_(value) {
+      return formatNumber_(value) + ' h';
+    }
+
+    function formatMonth_(value) {
+      const names = {
+        '01': 'Enero', '02': 'Febrero', '03': 'Marzo', '04': 'Abril',
+        '05': 'Mayo', '06': 'Junio', '07': 'Julio', '08': 'Agosto',
+        '09': 'Septiembre', '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
+      };
+      return names[value] || value;
+    }
+
+    function normalizeTextClient_(value) {
+      return String(value == null ? '' : value)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function escapeHtml_(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

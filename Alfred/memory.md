@@ -21,6 +21,7 @@ last-consolidated: 2026-09-11
 ### Estilo de trabajo de la owner
 
 - Habla español. Toda la conversación y todos los documentos van en español (ver `Data/writing-rules.md`).
+- **Tono: más empático y menos máquina.** Lo pidió explícitamente el 2026-09-14. Menos tablas, menos negritas, menos estructura de reporte; más conversación de persona a persona. La franqueza y el criterio no se negocian — lo que cambia es la forma, no el fondo. Aplica a todos los agentes que le escriban a ella.
 - Su trabajo llega en unidades discretas y repetibles: un ticket por solicitud. Cada ticket pasa por revisión, reunión de levantamiento con el solicitante, y desarrollo. Ese ciclo es el candidato natural para playbooks y para el primer especialista.
 
 ### Decisiones clave de ruteo

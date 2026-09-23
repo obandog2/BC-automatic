@@ -1,0 +1,120 @@
+<style>
+  /*
+   * Asistente Personal - v2
+   * Menos elementos, más jerarquía, más aire. Se conservan los tokens de color
+   * del Portal para que se sienta de la misma familia que el formulario.
+   */
+  :root {
+    --blue:#0b5bd3; --deep:#061f50; --ink:#14213d; --muted:#7b8794;
+    --line:#e6ecf3; --bg:#f7f9fc; --ok:#087f5b; --danger:#b91c1c;
+    font-family:Inter,Arial,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:var(--bg); }
+  h1,h2 { letter-spacing:-.03em; }
+
+  /* ------------------------------------------------------------- barra */
+  .barra { background:linear-gradient(120deg,var(--deep),#0b4fb5); color:white; }
+  .barra-interior { width:min(880px,calc(100% - 32px)); margin:0 auto;
+                    padding:18px 0 0; }
+  .identidad { display:flex; align-items:center; gap:13px; padding-bottom:16px; }
+  .identidad strong { display:block; font-size:17px; text-transform:capitalize;
+                      letter-spacing:-.02em; }
+  .mark { padding:7px 11px; border:2px solid rgba(255,255,255,.85);
+          border-radius:10px 3px; font-size:14px; font-weight:800; }
+  .tenue { color:#b9d2f5; font-size:12px; }
+
+  nav { display:flex; gap:4px; }
+  .tab { padding:11px 16px; border:none; background:none; cursor:pointer;
+         color:#c3d9f7; font-family:inherit; font-size:14px; font-weight:700;
+         border-bottom:3px solid transparent; }
+  .tab:hover { color:white; }
+  .tab.activa { color:white; border-bottom-color:#5aa9ff; }
+  .tab.apagada { color:#7f9dc7; cursor:default; }
+
+  /* ---------------------------------------------------------- secciones */
+  main { width:min(880px,calc(100% - 32px)); margin:0 auto; padding:28px 0 70px; }
+  .seccion { display:none; }
+  .seccion.visible { display:block; }
+
+  .cabecera-seccion { display:flex; align-items:center; justify-content:space-between;
+                      gap:14px; margin-bottom:6px; }
+  .cabecera-seccion h1 { margin:0; font-size:26px; }
+  .titulo-bloque { margin:34px 0 10px; font-size:15px; text-transform:uppercase;
+                   letter-spacing:.09em; color:var(--muted); }
+  .resumen { margin:0 0 20px; color:var(--muted); font-size:14px; }
+
+  /* -------------------------------------------------------------- listas */
+  .lista { list-style:none; margin:0; padding:0; }
+  .lista li { display:flex; align-items:flex-start; gap:12px; padding:13px 2px;
+              border-bottom:1px solid var(--line); font-size:15px; line-height:1.45; }
+  .lista li:last-child { border-bottom:none; }
+  .crece { flex:1; min-width:0; }
+  .lista a { color:var(--ink); text-decoration:none; font-weight:600; }
+  .lista a:hover { color:var(--blue); text-decoration:underline; }
+  .detalle { display:block; margin-top:3px; color:var(--muted); font-size:12.5px; }
+  .nuevo { color:var(--blue); font-weight:800; }
+
+  .hora { flex:none; width:52px; padding-top:1px; color:var(--ink);
+          font-size:14px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .ahora { color:var(--ok); }
+
+  /* ------------------------------------------------------------ acciones */
+  .acciones { display:flex; gap:2px; flex:none; }
+  .icono { width:30px; height:30px; border:none; border-radius:8px;
+           background:none; color:#c2ccd8; cursor:pointer; font-size:15px;
+           line-height:1; padding:0; }
+  .icono:hover { background:#eef3f9; color:var(--ink); }
+  .icono.on { color:#e8a23d; }
+  .icono.off { color:#b0bac6; background:#eef3f9; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center;
+         min-height:38px; padding:9px 16px; border:none; border-radius:9px;
+         font-family:inherit; font-weight:700; font-size:13.5px; cursor:pointer; }
+  .btn-azul { background:var(--blue); color:white; }
+  .btn-suave { background:#e9f0fa; color:#0b478d; }
+  .btn:disabled { opacity:.5; cursor:default; }
+  .btn-texto { min-height:0; padding:4px 8px; background:none; color:var(--muted);
+               font-size:12.5px; }
+  .btn-texto:hover { color:var(--danger); }
+
+  .filtros { display:flex; gap:6px; margin-bottom:4px; }
+  .filtro { padding:7px 13px; border:none; border-radius:99px; background:#eef2f7;
+            color:var(--muted); font-family:inherit; font-size:13px; font-weight:700;
+            cursor:pointer; }
+  .filtro.activo { background:var(--ink); color:white; }
+
+  /* ------------------------------------------------------------- avance */
+  .avance { display:flex; align-items:center; gap:18px; margin:18px 0 22px; }
+  .numero { font-size:40px; font-weight:800; letter-spacing:-.045em; }
+  .barra-avance { flex:1; height:8px; border-radius:99px; background:#e6ecf3;
+                  overflow:hidden; }
+  .barra-avance span { display:block; height:100%; border-radius:99px;
+                       background:var(--ok); transition:width .25s; }
+
+  .check { display:flex; align-items:center; gap:11px; flex:1; cursor:pointer;
+           min-width:0; }
+  .check input { flex:none; width:18px; height:18px; accent-color:var(--ok);
+                 cursor:pointer; }
+  .hecha { color:var(--muted); text-decoration:line-through; }
+
+  /* ------------------------------------------------------------ campos */
+  .fila-form { display:flex; gap:9px; margin:0 0 6px; }
+  input[type=text], textarea {
+    flex:1; min-width:0; padding:11px 13px; border:1px solid var(--line);
+    border-radius:9px; background:white; font-family:inherit; font-size:14.5px;
+    color:var(--ink); }
+  textarea { width:100%; resize:vertical; min-height:110px; line-height:1.5; }
+  input:focus, textarea:focus { outline:none; border-color:var(--blue);
+                                box-shadow:0 0 0 3px #dfeaff; }
+
+  /* ------------------------------------------------------------ estados */
+  .estado, .vacio { padding:16px 0; color:var(--muted); font-size:14px; }
+  .estado.error { color:var(--danger); }
+
+  @media(max-width:640px){
+    nav { overflow-x:auto; }
+    .tab { padding:11px 12px; font-size:13px; }
+    .cabecera-seccion h1 { font-size:22px; }
+  }
+</style>

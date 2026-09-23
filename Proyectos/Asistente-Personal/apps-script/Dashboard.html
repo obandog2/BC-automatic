@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <?!= include('Estilos') ?>
+  </head>
+  <body data-seccion-inicial="<?= seccionInicial ?>">
+
+    <header class="barra">
+      <div class="barra-interior">
+        <div class="identidad">
+          <span class="mark">Roche</span>
+          <div>
+            <strong id="cabeceraFecha">Cargando…</strong>
+            <span class="tenue" id="cabeceraCorreo"></span>
+          </div>
+        </div>
+        <nav id="nav">
+          <button class="tab" data-ir="inicio">Inicio</button>
+          <button class="tab" data-ir="correo">Correo</button>
+          <button class="tab" data-ir="agenda">Agenda</button>
+          <button class="tab" data-ir="notas">Notas</button>
+          <button class="tab apagada" type="button" disabled title="Pendiente de habilitar la Chat API en el dominio">Chat</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ================= Inicio ================= -->
+      <section class="seccion" id="seccion-inicio">
+        <div class="cabecera-seccion">
+          <h1>Tu día</h1>
+        </div>
+
+        <div class="avance">
+          <div>
+            <span class="numero" id="metasPorcentaje">0%</span>
+            <span class="tenue" id="metasConteo">sin metas todavía</span>
+          </div>
+          <div class="barra-avance"><span id="metasBarra" style="width:0%"></span></div>
+        </div>
+
+        <form class="fila-form" id="formMeta">
+          <input type="text" id="metaTexto" maxlength="300" autocomplete="off"
+                 placeholder="Una meta para hoy">
+          <button class="btn btn-azul" type="submit">Agregar</button>
+        </form>
+        <div id="metasCuerpo"><p class="estado">Cargando…</p></div>
+
+        <h2 class="titulo-bloque">Pendientes</h2>
+        <form class="fila-form" id="formPendiente">
+          <input type="text" id="pendienteTexto" maxlength="500" autocomplete="off"
+                 placeholder="Anotá un pendiente">
+          <button class="btn btn-azul" type="submit">Agregar</button>
+        </form>
+        <div id="pendientesCuerpo"><p class="estado">Cargando…</p></div>
+      </section>
+
+      <!-- ================= Correo ================= -->
+      <section class="seccion" id="seccion-correo">
+        <div class="cabecera-seccion">
+          <h1>Correo</h1>
+          <button class="btn btn-suave" id="btnCorreo">Actualizar</button>
+        </div>
+        <p class="resumen" id="correoResumen">Buscando el último resumen…</p>
+
+        <div class="filtros" id="correoFiltros" hidden>
+          <button class="filtro activo" data-filtro="dia">Del día</button>
+          <button class="filtro" data-filtro="esperando">Esperando respuesta</button>
+          <button class="filtro" data-filtro="copia">En copia</button>
+        </div>
+
+        <div id="correoImportantes"></div>
+        <div id="correoLista"><p class="estado">Cargando…</p></div>
+      </section>
+
+      <!-- ================= Agenda ================= -->
+      <section class="seccion" id="seccion-agenda">
+        <div class="cabecera-seccion">
+          <h1>Agenda</h1>
+          <button class="btn btn-suave" id="btnAgenda">Actualizar</button>
+        </div>
+        <div id="agendaCuerpo"><p class="estado">Cargando…</p></div>
+      </section>
+
+      <!-- ================= Notas ================= -->
+      <section class="seccion" id="seccion-notas">
+        <div class="cabecera-seccion">
+          <h1>Notas</h1>
+        </div>
+        <form id="formNota">
+          <textarea id="notaTexto" maxlength="8000" placeholder="Escribí acá…"></textarea>
+          <div class="fila-form" style="margin-top:10px">
+            <button class="btn btn-azul" type="submit" id="btnGuardarNota">Guardar</button>
+            <button class="btn btn-suave" type="button" id="btnCancelarNota" hidden>Cancelar</button>
+          </div>
+        </form>
+        <div id="notasCuerpo"><p class="estado">Cargando…</p></div>
+      </section>
+
+    </main>
+
+    <?!= include('Cliente') ?>
+  </body>
+</html>

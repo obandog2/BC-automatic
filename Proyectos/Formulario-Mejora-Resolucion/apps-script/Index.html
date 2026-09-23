@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light">
+    <style>
+      :root {
+        --blue-900: #082c70;
+        --blue-700: #0b5bd3;
+        --blue-500: #2385ff;
+        --blue-100: #eaf3ff;
+        --ink: #14213d;
+        --muted: #64748b;
+        --line: #dbe4f0;
+        --surface: #ffffff;
+        --background: #f4f7fb;
+        --danger: #c62828;
+        --success: #087f5b;
+        --shadow: 0 24px 60px rgba(8, 44, 112, .13);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--background); }
+      button, input, textarea, select { font: inherit; }
+      button { cursor: pointer; }
+      [hidden] { display: none !important; }
+
+      .page-shell { min-height: 100vh; display: grid; grid-template-columns: minmax(310px, 42%) 1fr; }
+      .hero {
+        position: sticky; top: 0; height: 100vh; overflow: hidden;
+        padding: clamp(32px, 5vw, 76px); color: white;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(51, 154, 255, .7), transparent 33%),
+          radial-gradient(circle at 85% 80%, rgba(0, 212, 170, .27), transparent 35%),
+          linear-gradient(145deg, #061f50 0%, #083b91 55%, #0b5bd3 100%);
+      }
+      .hero::after {
+        content: ""; position: absolute; width: 360px; height: 360px; border: 1px solid rgba(255,255,255,.18);
+        border-radius: 42% 58% 65% 35%; right: -130px; bottom: -100px; transform: rotate(24deg);
+      }
+      .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+      .brand-mark { display: grid; place-items: center; width: 72px; height: 42px; border: 2px solid white; border-radius: 12px 4px; letter-spacing: 0; font-size: 18px; }
+      .hero-content { position: relative; z-index: 1; max-width: 560px; margin-top: clamp(70px, 14vh, 150px); }
+      .eyebrow { color: #9ed0ff; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+      h1 { margin: 18px 0 22px; font-size: clamp(36px, 4.4vw, 68px); line-height: 1.02; letter-spacing: -.045em; }
+      .hero p { max-width: 500px; color: rgba(255,255,255,.82); font-size: 18px; line-height: 1.6; }
+      .privacy-note { position: absolute; z-index: 1; left: clamp(32px, 5vw, 76px); bottom: 34px; right: 40px; color: rgba(255,255,255,.64); font-size: 12px; }
+
+      .form-zone { padding: clamp(26px, 5vw, 72px); }
+      .form-card { width: min(760px, 100%); margin: 0 auto; padding: clamp(24px, 4vw, 52px); border: 1px solid rgba(219,228,240,.8); border-radius: 28px; background: rgba(255,255,255,.96); box-shadow: var(--shadow); }
+      .progress-wrap { margin-bottom: 38px; }
+      .progress-labels { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--muted); font-size: 13px; font-weight: 700; }
+      .progress-track { height: 8px; overflow: hidden; border-radius: 999px; background: #e8eef6; }
+      .progress-bar { width: 33.333%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue-700), #22a5f1); transition: width .3s ease; }
+
+      .step { animation: enter .28s ease both; }
+      @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      .step-kicker { margin: 0 0 7px; color: var(--blue-700); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+      h2 { margin: 0 0 10px; font-size: clamp(25px, 3vw, 34px); letter-spacing: -.025em; }
+      .step-intro { margin: 0 0 30px; color: var(--muted); line-height: 1.55; }
+      .field { margin-bottom: 25px; }
+      .field-label, legend { display: block; margin-bottom: 9px; font-size: 15px; font-weight: 760; }
+      .required { color: var(--danger); }
+      .help { display: block; margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+      input[type="text"], input[type="email"], select, textarea {
+        width: 100%; border: 1.5px solid var(--line); border-radius: 13px; padding: 13px 15px; color: var(--ink); background: #fbfdff; outline: none; transition: border .18s, box-shadow .18s, background .18s;
+      }
+      textarea { min-height: 130px; resize: vertical; line-height: 1.5; }
+      input:focus, select:focus, textarea:focus { border-color: var(--blue-500); background: white; box-shadow: 0 0 0 4px rgba(35,133,255,.12); }
+      fieldset { min-width: 0; margin: 0 0 25px; padding: 0; border: 0; }
+
+      .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .choice { position: relative; }
+      .choice input { position: absolute; opacity: 0; pointer-events: none; }
+      .choice span { display: flex; min-height: 52px; align-items: center; gap: 10px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 13px; color: #334155; background: #fbfdff; transition: .18s ease; }
+      .choice span::before { content: ""; flex: 0 0 auto; width: 17px; height: 17px; border: 2px solid #9aa9bd; border-radius: 50%; background: white; box-shadow: inset 0 0 0 4px white; }
+      .choice input[type="checkbox"] + span::before { border-radius: 5px; }
+      .choice input:checked + span { border-color: var(--blue-500); color: var(--blue-900); background: var(--blue-100); box-shadow: 0 0 0 2px rgba(35,133,255,.08); }
+      .choice input:checked + span::before { border-color: var(--blue-700); background: var(--blue-700); }
+      .choice input:focus-visible + span { outline: 3px solid rgba(35,133,255,.25); }
+      .risk-question { padding: 18px; margin-bottom: 14px; border: 1px solid var(--line); border-radius: 16px; background: #fbfdff; }
+      .risk-question legend { padding: 0; line-height: 1.4; }
+      .risk-question .choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .risk-question .choice span { justify-content: center; min-height: 46px; padding: 9px; font-size: 13px; text-align: center; }
+
+      .dropzone { position: relative; padding: 28px 18px; border: 1.5px dashed #9cb5d4; border-radius: 16px; text-align: center; background: #f8fbff; transition: .18s; }
+      .dropzone:hover { border-color: var(--blue-500); background: var(--blue-100); }
+      .dropzone input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+      .dropzone strong { display: block; margin-bottom: 5px; color: var(--blue-900); }
+      .file-list { margin: 10px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 12px; }
+      .file-list li { padding: 5px 0; overflow-wrap: anywhere; }
+      .honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
+
+      .actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--line); }
+      .button { display: inline-flex; align-items: center; justify-content: center; min-width: 128px; border: 0; border-radius: 13px; padding: 13px 20px; font-weight: 800; text-decoration: none; transition: transform .16s, box-shadow .16s, opacity .16s; }
+      .button:hover { transform: translateY(-1px); }
+      .button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
+      .button-primary { color: white; background: linear-gradient(135deg, var(--blue-700), var(--blue-500)); box-shadow: 0 10px 22px rgba(11,91,211,.24); }
+      .button-secondary { color: var(--blue-900); background: var(--blue-100); }
+      .message { display: none; margin: 0 0 24px; padding: 13px 15px; border-radius: 12px; font-size: 14px; line-height: 1.45; }
+      .message.error { display: block; color: #8e1b1b; background: #fff0f0; border: 1px solid #ffc9c9; }
+      .message.info { display: block; color: #0b4778; background: #edf7ff; border: 1px solid #b9ddff; }
+      .success { padding: 34px 10px; text-align: center; }
+      .success-icon { display: grid; place-items: center; width: 72px; height: 72px; margin: 0 auto 20px; border-radius: 50%; color: white; background: var(--success); font-size: 36px; }
+      .protocol { display: inline-block; margin: 12px 0 25px; padding: 10px 15px; border-radius: 10px; color: var(--blue-900); background: var(--blue-100); font-weight: 850; letter-spacing: .04em; }
+      .spinner { display: inline-block; width: 17px; height: 17px; margin-right: 8px; vertical-align: -3px; border: 2px solid rgba(255,255,255,.45); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      @media (max-width: 900px) {
+        .page-shell { display: block; }
+        .hero { position: relative; height: auto; min-height: 360px; padding-bottom: 80px; }
+        .hero-content { margin-top: 58px; }
+        .privacy-note { bottom: 24px; }
+        .form-zone { margin-top: -34px; position: relative; z-index: 2; }
+      }
+      @media (max-width: 600px) {
+        .hero { min-height: 330px; padding: 28px 22px 70px; }
+        .privacy-note { left: 22px; }
+        .hero p { font-size: 15px; }
+        .form-zone { padding: 12px; }
+        .form-card { padding: 24px 18px; border-radius: 20px; }
+        .choice-grid, .risk-question .choice-grid { grid-template-columns: 1fr; }
+        .risk-question .choice span { justify-content: flex-start; }
+        .actions { position: sticky; bottom: 0; margin-inline: -18px; padding: 14px 18px; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); }
+        .button { flex: 1; min-width: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <aside class="hero">
+        <div class="brand"><span class="brand-mark">Roche</span><span>Qualidade</span></div>
+        <div class="hero-content">
+          <div class="eyebrow">Melhoria contínua</div>
+          <h1>Gerenciamento de Melhoria e Resolução</h1>
+          <p>Compartilhe a situação para que possamos analisar os riscos associados e conduzir seu tratamento de forma efetiva.</p>
+        </div>
+        <div class="privacy-note">As informações serão utilizadas exclusivamente para a análise e o acompanhamento da situação reportada.</div>
+      </aside>
+
+      <section class="form-zone">
+        <div class="form-card">
+          <div id="formContent">
+            <div class="progress-wrap" aria-label="Progresso do formulário">
+              <div class="progress-labels"><span id="stepLabel">Etapa 1 de 3</span><span id="progressPercent">33%</span></div>
+              <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+            </div>
+
+            <div id="message" class="message" role="alert" aria-live="polite"></div>
+
+            <form id="reportForm" novalidate>
+              <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+
+              <section class="step" data-step="1">
+                <p class="step-kicker">Etapa 1</p>
+                <h2>Identificação</h2>
+                <p class="step-intro">Seu e-mail corporativo será identificado automaticamente.</p>
+
+                <div class="field">
+                  <label class="field-label" for="email">E-mail <span class="required">*</span></label>
+                  <input id="email" name="email" type="email" maxlength="180" autocomplete="email" placeholder="Identificando sua conta..." readonly required>
+                  <span id="emailHelp" class="help">E-mail obtido da sua sessão Google.</span>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="chapter">Chapter <span class="required">*</span></label>
+                  <select id="chapter" name="chapter" required disabled>
+                    <option value="">Carregando opções...</option>
+                  </select>
+                </div>
+                <fieldset>
+                  <legend>Esta situação provém de alguma destas fontes? <span class="required">*</span></legend>
+                  <div class="choice-grid">
+                    <label class="choice"><input type="checkbox" name="sources" value="Desvio de Processo"><span>Desvio de Processo</span></label>
+                    <label class="choice"><input type="checkbox" name="sources" value="Reclamação de Cliente (e outras atividades pós-venda)"><span>Reclamação de Cliente</span></label>
+                    <label class="choice"><input type="checkbox" name="sources" value="Auditorias"><span>Auditorias</span></label>
+                    <label class="choice"><input type="checkbox" name="sources" value="Revisão Gerencial"><span>Revisão Gerencial</span></label>
+                    <label class="choice"><input type="checkbox" name="sources" value="Análise de Tendência (Monitoramento de Dados)"><span>Análise de Tendência</span></label>
+                    <label class="choice"><input type="checkbox" name="sources" value="Atividades de Melhoria Contínua"><span>Melhoria Contínua</span></label>
+                  </div>
+                </fieldset>
+              </section>
+
+              <section class="step" data-step="2" hidden>
+                <p class="step-kicker">Etapa 2</p>
+                <h2>Descrição da situação</h2>
+                <p class="step-intro">Forneça contexto suficiente para que a equipe possa iniciar a análise.</p>
+
+                <div class="field">
+                  <label class="field-label" for="situation">Descreva brevemente a situação que requer tratamento <span class="required">*</span></label>
+                  <textarea id="situation" name="situation" maxlength="5000" required placeholder="Informe o produto ou serviço envolvido, o evento ou problema, onde foi observado e quando foi identificado."></textarea>
+                </div>
+                <fieldset>
+                  <legend>A situação requer alguma ação para evitar que o risco ou impacto seja maior? <span class="required">*</span></legend>
+                  <div class="choice-grid">
+                    <label class="choice"><input type="radio" name="requiresAction" value="Sim" required><span>Sim</span></label>
+                    <label class="choice"><input type="radio" name="requiresAction" value="Não"><span>Não</span></label>
+                  </div>
+                </fieldset>
+                <div class="field" id="actionsField" hidden>
+                  <label class="field-label" for="actions">Descreva brevemente as ações necessárias <span class="required">*</span></label>
+                  <textarea id="actions" name="actions" maxlength="3000" placeholder="Quais ações devem ser tomadas imediatamente?"></textarea>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="cause">Possível causa</label>
+                  <textarea id="cause" name="cause" maxlength="3000" placeholder="Caso tenha informações, descreva o que poderia ter causado a situação."></textarea>
+                  <span class="help">Se não houver informação adicional, este campo pode ficar em branco.</span>
+                </div>
+              </section>
+
+              <section class="step" data-step="3" hidden>
+                <p class="step-kicker">Etapa 3</p>
+                <h2>Classificação inicial</h2>
+                <p class="step-intro">Responda às perguntas abaixo para apoiar a triagem da situação.</p>
+
+                <div id="riskQuestions"></div>
+
+                <div class="field">
+                  <label class="field-label" for="attachments">Anexos</label>
+                  <div class="dropzone">
+                    <input id="attachments" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx">
+                    <strong>Arraste arquivos aqui ou clique para selecionar</strong>
+                    <span class="help">Até 3 arquivos, com no máximo 5 MB cada.</span>
+                  </div>
+                  <ul id="fileList" class="file-list"></ul>
+                </div>
+
+                <label class="choice">
+                  <input id="sendCopy" type="checkbox">
+                  <span>Enviar uma cópia da confirmação para o meu e-mail</span>
+                </label>
+              </section>
+
+              <div class="actions">
+                <button id="backButton" class="button button-secondary" type="button" hidden>Voltar</button>
+                <button id="nextButton" class="button button-primary" type="button">Continuar</button>
+                <button id="submitButton" class="button button-primary" type="submit" hidden>Enviar formulário</button>
+              </div>
+            </form>
+          </div>
+
+          <section id="successView" class="success" hidden aria-live="polite">
+            <div class="success-icon">✓</div>
+            <h2>Resposta registrada</h2>
+            <p>Obrigado por compartilhar a situação. Seu número de protocolo é:</p>
+            <div id="protocol" class="protocol"></div>
+            <p class="help">Guarde este número para futuras consultas.</p>
+            <a id="trackingLink" class="button button-secondary" href="<?= appUrl ?>?page=tracking">Monitorar esta solicitação</a>
+            <button id="newResponseButton" class="button button-primary" type="button">Enviar outra resposta</button>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const riskQuestions = [
+        ['affectedPatient', 'Afetou a saúde de um paciente?'],
+        ['patientRisk', 'Poderia colocar em risco a saúde de um paciente?'],
+        ['brokeLaw', 'Resultou em descumprimento de uma legislação local?'],
+        ['lawRisk', 'Poderia resultar em descumprimento de uma legislação local?'],
+        ['affectedQuality', 'Afetou a qualidade dos produtos que se encontram no mercado atualmente?'],
+        ['qualityRisk', 'Poderia afetar a qualidade dos produtos que se encontram no mercado atualmente?']
+      ];
+      const allowedTypes = [
+        'application/pdf', 'image/jpeg', 'image/png',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+      const form = document.getElementById('reportForm');
+      const message = document.getElementById('message');
+      const nextButton = document.getElementById('nextButton');
+      const backButton = document.getElementById('backButton');
+      const submitButton = document.getElementById('submitButton');
+      const attachmentInput = document.getElementById('attachments');
+      let currentStep = 1;
+      let startedAt = Date.now();
+
+      document.getElementById('riskQuestions').innerHTML = riskQuestions.map(([name, label]) => `
+        <fieldset class="risk-question">
+          <legend>${label} <span class="required">*</span></legend>
+          <div class="choice-grid">
+            ${['Sim', 'Não', 'Não tenho esta informação'].map((option, index) => `
+              <label class="choice"><input type="radio" name="${name}" value="${option}" ${index === 0 ? 'required' : ''}><span>${option}</span></label>
+            `).join('')}
+          </div>
+        </fieldset>
+      `).join('');
+
+      google.script.run
+        .withSuccessHandler(loadChapters)
+        .withFailureHandler(error => showMessage(readError(error)))
+        .getInitialData();
+
+      function loadChapters(data) {
+        const select = document.getElementById('chapter');
+        select.innerHTML = '<option value="">Selecione um Chapter</option>' +
+          data.chapters.map(value => `<option value="${escapeAttribute(value)}">${escapeText(value)}</option>`).join('');
+        select.disabled = false;
+        const email = document.getElementById('email');
+        const emailHelp = document.getElementById('emailHelp');
+        if (data.email) {
+          email.value = data.email;
+          email.readOnly = true;
+        } else {
+          email.readOnly = false;
+          email.placeholder = 'nome@roche.com';
+          emailHelp.textContent = 'Não foi possível identificar sua conta. Informe seu e-mail corporativo.';
+        }
+      }
+
+      document.querySelectorAll('input[name="requiresAction"]').forEach(input => {
+        input.addEventListener('change', () => {
+          const needsAction = form.elements.requiresAction.value === 'Sim';
+          const field = document.getElementById('actionsField');
+          field.hidden = !needsAction;
+          document.getElementById('actions').required = needsAction;
+          if (!needsAction) document.getElementById('actions').value = '';
+        });
+      });
+
+      attachmentInput.addEventListener('change', () => {
+        const files = [...attachmentInput.files];
+        const list = document.getElementById('fileList');
+        list.innerHTML = files.map(file => `<li>${escapeText(file.name)} — ${formatBytes(file.size)}</li>`).join('');
+        const error = validateFiles(files);
+        if (error) showMessage(error); else clearMessage();
+      });
+
+      nextButton.addEventListener('click', () => {
+        if (!validateStep(currentStep)) return;
+        currentStep += 1;
+        renderStep();
+      });
+
+      backButton.addEventListener('click', () => {
+        currentStep -= 1;
+        renderStep();
+      });
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateStep(3)) return;
+        const files = [...attachmentInput.files];
+        const fileError = validateFiles(files);
+        if (fileError) return showMessage(fileError);
+
+        setSubmitting(true);
+        showMessage('Estamos registrando sua resposta. Não feche esta página.', 'info');
+        try {
+          const attachments = await Promise.all(files.map(fileToPayload));
+          const payload = collectPayload(attachments);
+          google.script.run
+            .withSuccessHandler(handleSuccess)
+            .withFailureHandler(error => {
+              setSubmitting(false);
+              showMessage(readError(error));
+            })
+            .submitForm(payload);
+        } catch (error) {
+          setSubmitting(false);
+          showMessage(readError(error));
+        }
+      });
+
+      document.getElementById('newResponseButton').addEventListener('click', () => {
+        form.reset();
+        attachmentInput.dispatchEvent(new Event('change'));
+        document.getElementById('actionsField').hidden = true;
+        document.getElementById('actions').required = false;
+        document.getElementById('successView').hidden = true;
+        document.getElementById('formContent').hidden = false;
+        currentStep = 1;
+        startedAt = Date.now();
+        renderStep();
+      });
+
+      function renderStep() {
+        document.querySelectorAll('.step').forEach(step => {
+          step.hidden = Number(step.dataset.step) !== currentStep;
+        });
+        const percentage = Math.round((currentStep / 3) * 100);
+        document.getElementById('stepLabel').textContent = `Etapa ${currentStep} de 3`;
+        document.getElementById('progressPercent').textContent = `${percentage}%`;
+        document.getElementById('progressBar').style.width = `${percentage}%`;
+        backButton.hidden = currentStep === 1;
+        nextButton.hidden = currentStep === 3;
+        submitButton.hidden = currentStep !== 3;
+        clearMessage();
+        document.querySelector('.form-zone').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function validateStep(stepNumber) {
+        clearMessage();
+        const section = document.querySelector(`[data-step="${stepNumber}"]`);
+        const controls = [...section.querySelectorAll('input, select, textarea')];
+        for (const control of controls) {
+          if (!control.checkValidity()) {
+            control.reportValidity();
+            control.focus();
+            return false;
+          }
+        }
+        if (stepNumber === 1 && !form.querySelector('input[name="sources"]:checked')) {
+          showMessage('Selecione ao menos uma fonte da situação.');
+          form.querySelector('input[name="sources"]').focus();
+          return false;
+        }
+        return true;
+      }
+
+      function validateFiles(files) {
+        if (files.length > 3) return 'Selecione no máximo 3 arquivos.';
+        for (const file of files) {
+          if (!allowedTypes.includes(file.type)) return `O tipo do arquivo "${file.name}" não é permitido.`;
+          if (file.size > 5 * 1024 * 1024) return `O arquivo "${file.name}" excede o limite de 5 MB.`;
+        }
+        return '';
+      }
+
+      function collectPayload(attachments) {
+        const value = name => form.elements[name].value;
+        return {
+          startedAt,
+          website: value('website'),
+          email: value('email').trim(),
+          chapter: value('chapter'),
+          sources: [...form.querySelectorAll('input[name="sources"]:checked')].map(input => input.value),
+          situation: value('situation').trim(),
+          requiresAction: value('requiresAction'),
+          actions: value('actions').trim(),
+          cause: value('cause').trim(),
+          affectedPatient: value('affectedPatient'),
+          patientRisk: value('patientRisk'),
+          brokeLaw: value('brokeLaw'),
+          lawRisk: value('lawRisk'),
+          affectedQuality: value('affectedQuality'),
+          qualityRisk: value('qualityRisk'),
+          sendCopy: document.getElementById('sendCopy').checked,
+          attachments
+        };
+      }
+
+      function fileToPayload(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({
+            name: file.name,
+            mimeType: file.type,
+            base64: String(reader.result).split(',')[1]
+          });
+          reader.onerror = () => reject(new Error(`Não foi possível ler o arquivo "${file.name}".`));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function handleSuccess(result) {
+        setSubmitting(false);
+        document.getElementById('protocol').textContent = result.protocol;
+        document.getElementById('trackingLink').href = '<?= appUrl ?>?page=tracking&id=' + encodeURIComponent(result.protocol);
+        document.getElementById('formContent').hidden = true;
+        document.getElementById('successView').hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function setSubmitting(active) {
+        submitButton.disabled = active;
+        backButton.disabled = active;
+        submitButton.innerHTML = active ? '<span class="spinner"></span>Enviando...' : 'Enviar formulário';
+      }
+
+      function showMessage(text, type = 'error') {
+        message.textContent = text;
+        message.className = `message ${type}`;
+        message.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      function clearMessage() { message.textContent = ''; message.className = 'message'; }
+      function readError(error) { return error && error.message ? error.message : String(error || 'Ocorreu um erro inesperado.'); }
+      function formatBytes(bytes) { return bytes < 1024 * 1024 ? `${Math.ceil(bytes / 1024)} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`; }
+      function escapeText(value) { const span = document.createElement('span'); span.textContent = value; return span.innerHTML; }
+      function escapeAttribute(value) { return escapeText(value).replace(/"/g, '&quot;'); }
+    </script>
+  </body>
+</html>

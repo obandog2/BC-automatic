@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <style>
+      :root { --blue:#0b5bd3; --deep:#061f50; --ink:#14213d; --muted:#64748b; --line:#dbe4f0; --bg:#f4f7fb; font-family:Inter,Arial,sans-serif; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--ink); background:var(--bg); }
+      .hero { padding:56px clamp(22px,7vw,100px) 105px; color:white; background:radial-gradient(circle at 85% 0,#248bff 0,transparent 30%),linear-gradient(140deg,var(--deep),#0b4fb5); }
+      .brand { display:inline-flex; align-items:center; gap:12px; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+      .mark { padding:9px 14px; border:2px solid white; border-radius:11px 4px; font-size:18px; letter-spacing:0; }
+      .hero-content { max-width:800px; margin-top:72px; }
+      .eyebrow { color:#a9d4ff; font-size:13px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
+      h1 { max-width:680px; margin:16px 0; font-size:clamp(38px,5vw,66px); line-height:1.02; letter-spacing:-.045em; }
+      .hero p { max-width:650px; margin:0; color:#d9e9ff; font-size:18px; line-height:1.6; }
+      .content { width:min(1180px,calc(100% - 32px)); margin:-55px auto 60px; position:relative; }
+      .primary-card { display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center; padding:30px; border-radius:22px; color:white; background:linear-gradient(135deg,#087f5b,#12a878); box-shadow:0 18px 45px rgba(8,127,91,.22); }
+      .primary-card h2 { margin:0 0 8px; font-size:26px; }
+      .primary-card p { margin:0; color:#d9fff2; line-height:1.5; }
+      .button { display:inline-flex; justify-content:center; align-items:center; min-height:48px; padding:12px 19px; border-radius:12px; text-decoration:none; font-weight:800; white-space:nowrap; }
+      .button-white { color:#076849; background:white; }
+      .button-blue { color:white; background:var(--blue); }
+      .button-soft { color:#0b478d; background:#eaf3ff; }
+      .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-top:22px; }
+      .card { min-height:240px; padding:26px; border:1px solid var(--line); border-radius:20px; background:white; box-shadow:0 12px 34px rgba(8,44,112,.08); display:flex; flex-direction:column; }
+      .icon { display:grid; place-items:center; width:46px; height:46px; margin-bottom:20px; border-radius:13px; color:var(--blue); background:#eaf3ff; font-size:22px; }
+      .card h3 { margin:0 0 9px; font-size:20px; }
+      .card p { margin:0 0 24px; color:var(--muted); line-height:1.5; }
+      .card .button { margin-top:auto; align-self:flex-start; }
+      .disabled { opacity:.55; pointer-events:none; }
+      .tag { display:inline-block; margin-left:7px; padding:3px 7px; border-radius:99px; color:#64748b; background:#eef2f6; font-size:10px; text-transform:uppercase; }
+      footer { padding:0 20px 35px; color:var(--muted); text-align:center; font-size:12px; }
+      @media(max-width:800px){ .hero{padding-bottom:85px}.hero-content{margin-top:50px}.content{margin-top:-40px}.primary-card{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.card{min-height:210px} }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="brand"><span class="mark">Roche</span><span>Portal de Qualidade</span></div>
+      <div class="hero-content">
+        <div class="eyebrow">Gestão e melhoria contínua</div>
+        <h1>Encontre o canal certo para sua solicitação</h1>
+        <p>Registre uma nova situação, acompanhe um protocolo existente ou consulte os indicadores do processo.</p>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="primary-card">
+        <div><h2>Já possui um protocolo?</h2><p>Consulte o estado atual usando o ID recebido ao enviar o formulário.</p></div>
+        <a class="button button-white" href="<?= appUrl ?>?page=tracking">Monitorar sua solicitação aqui</a>
+      </section>
+
+      <section class="grid" aria-label="Serviços disponíveis">
+        <article class="card">
+          <div class="icon">✓</div>
+          <h3>Não conformidades internas</h3>
+          <p>Registre situações internas que precisam de análise, tratamento e acompanhamento.</p>
+          <a class="button button-blue" href="<?= appUrl ?>?page=form">Abrir formulário</a>
+        </article>
+
+        <article class="card">
+          <div class="icon">↗</div>
+          <h3>Fornecedores <span class="tag">Em breve</span></h3>
+          <p>Canal dedicado ao registro de situações relacionadas a fornecedores.</p>
+          <span class="button button-soft disabled">Ainda não disponível</span>
+        </article>
+
+        <article class="card">
+          <div class="icon">▥</div>
+          <h3>Dashboards</h3>
+          <p>Acompanhe volumes, estados, tempos de atendimento e indicadores consolidados.</p>
+          <a id="dashboardLink" class="button button-soft disabled" href="#">Configuração pendente</a>
+        </article>
+      </section>
+    </main>
+
+    <footer>Uso interno. Não compartilhe informações confidenciais fora dos canais autorizados.</footer>
+    <script>
+      google.script.run.withSuccessHandler(function(data) {
+        if (!data.dashboardUrl) return;
+        const link = document.getElementById('dashboardLink');
+        link.href = data.dashboardUrl;
+        link.textContent = 'Abrir dashboards';
+        link.classList.remove('disabled');
+      }).getPortalData();
+    </script>
+  </body>
+</html>

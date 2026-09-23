@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <style>
+      :root { --blue:#0b5bd3; --deep:#061f50; --ink:#14213d; --muted:#64748b; --line:#dbe4f0; --bg:#f4f7fb; --green:#087f5b; font-family:Inter,Arial,sans-serif; }
+      * { box-sizing:border-box; }
+      body { min-height:100vh; margin:0; padding:30px 18px; color:var(--ink); background:radial-gradient(circle at 80% 0,#dcebff,transparent 34%),var(--bg); }
+      .top { width:min(760px,100%); margin:0 auto 24px; }
+      .back { color:var(--blue); text-decoration:none; font-weight:700; }
+      .card { width:min(760px,100%); margin:auto; padding:clamp(25px,5vw,48px); border:1px solid var(--line); border-radius:24px; background:white; box-shadow:0 22px 55px rgba(8,44,112,.12); }
+      .eyebrow { color:var(--blue); font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+      h1 { margin:12px 0 10px; font-size:clamp(30px,5vw,45px); letter-spacing:-.035em; }
+      .intro { margin:0 0 30px; color:var(--muted); line-height:1.55; }
+      .search { display:grid; grid-template-columns:1fr auto; gap:10px; }
+      input { min-width:0; padding:14px 15px; border:1.5px solid var(--line); border-radius:12px; font:inherit; text-transform:uppercase; }
+      input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 4px rgba(11,91,211,.1); }
+      button { padding:13px 22px; border:0; border-radius:12px; color:white; background:var(--blue); font-weight:800; cursor:pointer; }
+      button:disabled { opacity:.55; cursor:wait; }
+      .message { margin-top:18px; padding:13px 15px; border-radius:11px; color:#8e1b1b; background:#fff0f0; }
+      .result { margin-top:28px; padding-top:26px; border-top:1px solid var(--line); }
+      .status { display:inline-block; padding:7px 11px; border-radius:99px; color:#076849; background:#e2f8ef; font-size:13px; font-weight:800; }
+      dl { display:grid; grid-template-columns:150px 1fr; gap:14px; margin:24px 0 0; }
+      dt { color:var(--muted); font-size:13px; font-weight:700; }
+      dd { margin:0; overflow-wrap:anywhere; font-weight:650; }
+      [hidden] { display:none!important; }
+      @media(max-width:560px){ .search{grid-template-columns:1fr}.search button{width:100%}dl{grid-template-columns:1fr;gap:5px}dd{margin-bottom:12px} }
+    </style>
+  </head>
+  <body>
+    <nav class="top"><a class="back" href="<?= appUrl ?>?page=portal">← Voltar ao portal</a></nav>
+    <main class="card">
+      <div class="eyebrow">Acompanhamento</div>
+      <h1>Monitore sua solicitação</h1>
+      <p class="intro">Digite o protocolo fornecido após o envio do formulário.</p>
+      <form id="trackingForm" class="search">
+        <input id="protocolInput" aria-label="Protocolo" placeholder="GMR-20260911-A1B2C3D4" autocomplete="off" required>
+        <button id="searchButton" type="submit">Consultar</button>
+      </form>
+      <div id="message" class="message" hidden></div>
+      <section id="result" class="result" hidden>
+        <span id="status" class="status"></span>
+        <dl>
+          <dt>Protocolo</dt><dd id="resultProtocol"></dd>
+          <dt>Data de registro</dt><dd id="createdAt"></dd>
+          <dt>Chapter</dt><dd id="chapter"></dd>
+          <dt>Triagem inicial</dt><dd id="triage"></dd>
+        </dl>
+      </section>
+    </main>
+    <script>
+      const initialProtocol = <?!= JSON.stringify(requestId) ?>;
+      const form = document.getElementById('trackingForm');
+      const input = document.getElementById('protocolInput');
+      const button = document.getElementById('searchButton');
+      const message = document.getElementById('message');
+      const result = document.getElementById('result');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        search(input.value);
+      });
+
+      function search(protocol) {
+        message.hidden = true;
+        result.hidden = true;
+        button.disabled = true;
+        button.textContent = 'Consultando...';
+        google.script.run
+          .withSuccessHandler(showResult)
+          .withFailureHandler(showError)
+          .lookupRequest(protocol);
+      }
+
+      function showResult(data) {
+        button.disabled = false;
+        button.textContent = 'Consultar';
+        if (!data) return showError('Protocolo não encontrado. Verifique o código e tente novamente.');
+        document.getElementById('status').textContent = data.status;
+        document.getElementById('resultProtocol').textContent = data.protocol;
+        document.getElementById('createdAt').textContent = data.createdAt || '—';
+        document.getElementById('chapter').textContent = data.chapter || '—';
+        document.getElementById('triage').textContent = data.triage || '—';
+        result.hidden = false;
+      }
+
+      function showError(error) {
+        button.disabled = false;
+        button.textContent = 'Consultar';
+        message.textContent = error && error.message ? error.message : String(error);
+        message.hidden = false;
+      }
+
+      if (initialProtocol) {
+        input.value = initialProtocol;
+        search(initialProtocol);
+      }
+    </script>
+  </body>
+</html>

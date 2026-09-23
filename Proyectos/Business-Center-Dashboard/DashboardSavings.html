@@ -1,0 +1,76 @@
+<!-- 1. AGREGA este bloque después de disclaimerAhorro. -->
+<section id="savingsInsights" class="savings-insights is-hidden">
+  <article class="saving-card saving-primary">
+    <span class="saving-icon">⚡</span>
+    <div><small>Ahorro semanal exacto</small><strong id="savingWeekly">0,00 h</strong></div>
+  </article>
+  <article class="saving-card">
+    <span class="saving-icon">↗</span>
+    <div><small>Run rate anual (52 semanas)</small><strong id="savingAnnual">0,00 h</strong></div>
+  </article>
+  <article class="saving-card">
+    <span class="saving-icon">◷</span>
+    <div><small>Equivalente anual</small><strong id="savingDays">0 jornadas</strong></div>
+  </article>
+  <article class="saving-card">
+    <span class="saving-icon">✓</span>
+    <div><small>Calidad de lectura</small><strong id="savingQuality">Sin auditar</strong></div>
+  </article>
+</section>
+
+<!-- 2. AGREGA este CSS al final del <style>. -->
+<style>
+  .savings-insights { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:20px; }
+  .saving-card { display:flex; align-items:center; gap:13px; min-height:92px; padding:18px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(145deg,#fff,#f8fbfd); box-shadow:0 8px 22px rgba(23,37,45,.06); }
+  .saving-primary { color:#fff; border:0; background:linear-gradient(135deg,#5a2ca0,#8461c9); }
+  .saving-icon { display:grid; place-items:center; flex:0 0 42px; width:42px; height:42px; border-radius:12px; background:rgba(111,66,193,.1); font-size:21px; }
+  .saving-primary .saving-icon { background:rgba(255,255,255,.17); }
+  .saving-card small { display:block; margin-bottom:7px; color:#647681; font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+  .saving-primary small { color:#eee7fa; }
+  .saving-card strong { display:block; font-size:20px; line-height:1.1; }
+  .quality-ok { color:var(--green); }
+  .quality-warning { color:var(--orange); }
+  @media(max-width:1000px){.savings-insights{grid-template-columns:repeat(2,1fr)}.filter-section,.kpi-grid,.kpi-grid.grid-6,.chart-grid,.chart-grid.grid-4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.savings-insights,.filter-section,.kpi-grid,.kpi-grid.grid-6,.chart-grid,.chart-grid.grid-4{grid-template-columns:1fr}.topbar{align-items:flex-start;gap:12px}.nav{overflow-x:auto}.nav-btn{white-space:nowrap}}
+</style>
+
+<!-- 3. AGREGA estas funciones dentro del <script>. -->
+<script>
+  function hasActiveFilters() {
+    return ['filtAnio','filtMes','filtPais','filtArea','filtEstado']
+      .some(id => document.getElementById(id).value !== '');
+  }
+
+  function renderSavingsInsights(totalSavings, filtered) {
+    const panel = document.getElementById('savingsInsights');
+    if (currentView !== 'automatizaciones') {
+      panel.classList.add('is-hidden');
+      return;
+    }
+    panel.classList.remove('is-hidden');
+
+    const annual = totalSavings * 52;
+    const workdays = annual / 8;
+    const format = value => new Intl.NumberFormat('es-UY', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+
+    document.getElementById('savingWeekly').textContent = format(totalSavings) + ' h' + (filtered ? ' filtradas' : '');
+    document.getElementById('savingAnnual').textContent = format(annual) + ' h';
+    document.getElementById('savingDays').textContent = format(workdays) + ' jornadas';
+
+    const audit = db.savingsAudit && db.savingsAudit.automatizaciones;
+    const quality = document.getElementById('savingQuality');
+    if (!audit) {
+      quality.textContent = 'Actualizar caché';
+      quality.className = 'quality-warning';
+    } else if (audit.filasInvalidas === 0) {
+      quality.textContent = audit.filasLeidas + '/' + audit.filasConValor + ' filas OK';
+      quality.className = 'quality-ok';
+    } else {
+      quality.textContent = audit.filasInvalidas + ' valores rechazados';
+      quality.className = 'quality-warning';
+    }
+  }
+</script>
