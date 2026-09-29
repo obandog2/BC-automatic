@@ -1,0 +1,10 @@
+En Index.html, busca este bloque dentro de <section id="successView">:
+
+<a id="trackingLink" class="button button-secondary" href="<?= appUrl ?>?page=tracking">Monitorar esta solicitação</a>
+<button id="newResponseButton" class="button button-primary" type="button">Enviar outra resposta</button>
+
+Reemplázalo por este bloque:
+
+<a id="trackingLink" class="button button-secondary" href="<?= appUrl ?>?page=tracking">Monitorar esta solicitação</a>
+<a class="button button-secondary" href="<?= appUrl ?>?page=portal">Voltar ao portal</a>
+<button id="newResponseButton" class="button button-primary" type="button">Enviar outra resposta</button>

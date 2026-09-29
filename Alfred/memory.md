@@ -12,7 +12,8 @@ last-consolidated: 2026-09-11
 
 - **Owner:** Gaby
 - **Contexto de trabajo:** Trabaja en el área de Business Center, en automatización y mejora de flujos de trabajo mediante programas. Es programadora. Su ciclo de trabajo: llega un ticket → lo revisa → tiene una reunión con la persona solicitante → desarrolla el programa. Stack principal: Google Apps Script y Visual Studio.
-- **Equipo:** Alicia (HR), Tuti (Revisora del Sistema), Joy (Gestora de Conocimiento), Samuel (Analista de Requisitos y Desarrollador). Se agregan agentes especialistas según se vayan contratando.
+- **Equipo:** Alicia (HR), Tuti (Revisora del Sistema), Joy (Gestora de Conocimiento), Samuel (Analista de Requisitos y Desarrollador), Nora (Triage de Solicitudes de Automatización, desde 2026-09-24). Se agregan agentes especialistas según se vayan contratando.
+- **Contexto de proyecto, reglas transversales e integraciones:** la versión vigente vive en `CLAUDE.md` (consolidado el 2026-09-29). Si esta memoria y `CLAUDE.md` difieren, manda `CLAUDE.md`.
 
 ---
 
@@ -28,14 +29,16 @@ last-consolidated: 2026-09-11
 
 | Fecha | Patrón | Decisión |
 |------|---------|----------|
-| 2026-09-11 | Capability gap detectado al registrar el contexto: el equipo base (Alicia, Tuti, Joy) no cubre trabajo técnico. Gaby programa en Apps Script y Visual Studio. | Falta un especialista de desarrollo. Ruta: Alicia. Pendiente de que Gaby lo pida. |
+| 2026-09-11 | Capability gap detectado al registrar el contexto: el equipo base (Alicia, Tuti, Joy) no cubre trabajo técnico. Gaby programa en Apps Script y Visual Studio. | Falta un especialista de desarrollo. Ruta: Alicia. *Resuelto el mismo día: la contratación aparte se canceló y el desarrollo lo absorbió Samuel.* |
+| 2026-09-24 | Solicitudes de automatización del tablero de intake de monday. | Ruta: Nora (triage y propuesta). Gaby decide; lo aprobado pasa a Samuel. |
 
-### Integraciones pendientes (no existen hoy — no prometerlas como disponibles)
+### Integraciones (actualizado 2026-09-29; la versión vigente está en `CLAUDE.md`)
 
 | Integración | Para qué | Estado |
 |---|---|---|
-| API de Monday.com | Los tickets de Gaby llegan a un tablero de Monday. Hoy ella los pega a mano. Con la API, la entrada se automatiza. | Esperando que Gaby consiga los accesos. |
-| Envío de correo | Samuel redacta mensajes al solicitante pero no puede enviarlos. Hoy Gaby los envía. | Proyecto aparte, posterior a la contratación del desarrollador. Ruta probable: web app de Apps Script (terreno de Gaby) sobre MCP de Gmail, por permisos más acotados. Decisión tomada el 2026-09-11: conservar aprobación humana antes de cada envío, aunque exista la integración. Un correo enviado en nombre de Gabriela Obando no se puede deshacer. |
+| Lectura de monday.com | Tablero **Solicitud Automatización PEC/ 2026** (board `5091208859`). Hoy Gaby pega el contenido a mano. | **Decidida, pendiente de ejecución.** Vía: usuario dedicado con permiso de Viewer y su token (el token personal de Gaby quedó descartado: no admite solo lectura). Falta, dueña Gaby y sin fecha: crear el usuario, sacar el token desde su sesión, instalar Node.js, configurar `.mcp.json` con variable de entorno, sumarlo a las herramientas de Nora. No prometerla como disponible. |
+| Conector de correo | Leer las notificaciones del Business Center. | **Descartado por política, no pendiente.** Cuenta corporativa de Roche en dominio regulado, apps OAuth de terceros casi seguro bloqueadas, `gmail.readonly` da todo el buzón, y reenviar correo corporativo afuera viola la política de datos. Si hace falta un correo, Gaby lo pega. |
+| Envío de correo | Samuel redacta mensajes al solicitante pero no puede enviarlos. | Hoy Gaby los envía. La ruta anotada el 2026-09-11 (MCP de Gmail) cae bajo el descarte de arriba. Queda sin confirmar si una web app de Apps Script dentro del dominio de Roche sigue siendo opción; no proponerla sin preguntarle a Gaby. Vigente en cualquier caso: aprobación humana antes de cada envío, porque un correo enviado en nombre de Gabriela Obando no se puede deshacer. |
 
 ### Decisiones de sistema
 
@@ -44,3 +47,4 @@ last-consolidated: 2026-09-11
 | 2026-09-11 | Instalación inicial completa. Cuatro agentes base en operación. |
 | 2026-09-11 | El workspace se encontró a medio construir (solo carpetas y archivos de referencia en Data/). Alfred completó las fases restantes de SETUP.md: agentes nativos, perfiles de Team, memorias, skills, playbooks, hook, andamiaje de Knowledge. |
 | 2026-09-11 | Workspace unificado en español. Gaby anuló la antigua regla de escritura 3, que dejaba en inglés los archivos de la instalación inicial. Todo el contenido se tradujo, salvo `Data/SETUP.md`, que se conserva en su idioma original como referencia del instalador. Los nombres de archivos y carpetas no cambiaron. Ejecutado por Tuti. |
+| 2026-09-29 | Consolidado en `CLAUDE.md` lo que salió de la conversación del 2026-09-23 al 2026-09-29: contexto del proyecto, estado de Nora y de BCAT-0077, convención de código de Samuel (resumen con enlace), integraciones decididas, reglas transversales (tokens, contenido no confiable, verificar antes de afirmar, restos en correcciones), aprendizajes de método y la propuesta abierta del formulario de intake. Ejecutado por Tuti. |

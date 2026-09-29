@@ -1,0 +1,19 @@
+En Index.html, reemplaza estas dos partes.
+
+1) En CSS, reemplaza:
+
+.brand { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.brand-mark { display: grid; place-items: center; width: 72px; height: 42px; border: 2px solid white; border-radius: 12px 4px; letter-spacing: 0; font-size: 18px; }
+
+por:
+
+.brand { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.brand-logo { width: 112px; max-height: 46px; object-fit: contain; object-position: left center; background: #fff; border-radius: 7px; padding: 4px; }
+
+2) En HTML, reemplaza:
+
+<div class="brand"><span class="brand-mark">Roche</span><span>Qualidade</span></div>
+
+por:
+
+<div class="brand"><img class="brand-logo" src="https://lh3.googleusercontent.com/d/1vsYZaquFToJi11vd611aXlvwT-bBTo4N" alt="Logo"><span>Qualidade</span></div>
