@@ -22,6 +22,7 @@
 | [Tuti](Team/Tuti.md) | Revisora del Sistema | auditoría del sistema, perfiles de agente, archivos de memoria, playbooks, estructura de carpetas, salud del ecosistema |
 | [Joy](Team/Joy.md) | Gestora de Conocimiento | vault de conocimiento, ingest de documentos, resúmenes de fuente, artículos de concepto, Q&A entre documentos |
 | [Samuel](Team/Samuel.md) | Analista de Requisitos y Desarrollador | ticket, solicitud ambigua, requisitos, especificación, alcance, cambio de alcance, preparación de reunión, insumos pendientes, mensaje al solicitante, triaje de cola, criterios de aceptación, transcripción de reunión, código, Apps Script, Java, desarrollo, implementación, revisar lógica, propuesta técnica |
+| [Nora](Team/Nora.md) | Especialista en Triage de Solicitudes de Automatización | solicitud de automatización, tablero de intake, monday.com, triage de solicitud, problema real, duplicados, familia relacionada, automatización parecida, propuesta de automatización, recomendación de plataforma, horas estimadas, ahorro proyectado, código BCAT, propuestas pendientes, esperando decisión |
 
 ## Referencia
 
