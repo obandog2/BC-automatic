@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <style>
+      :root { --blue:#0b5bd3; --deep:#061f50; --ink:#14213d; --muted:#64748b; --line:#dbe4f0; --bg:#f4f7fb; --green:#087f5b; font-family:Inter,Arial,sans-serif; }
+      * { box-sizing:border-box; }
+      body { min-height:100vh; margin:0; padding:30px 18px; color:var(--ink); background:radial-gradient(circle at 80% 0,#dcebff,transparent 34%),var(--bg); }
+      .top { width:min(760px,100%); margin:0 auto 24px; }
+      .back { color:var(--blue); text-decoration:none; font-weight:700; }
+      .card { width:min(760px,100%); margin:auto; padding:clamp(25px,5vw,48px); border:1px solid var(--line); border-radius:24px; background:white; box-shadow:0 22px 55px rgba(8,44,112,.12); }
+      .eyebrow { color:var(--blue); font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+      h1 { margin:12px 0 10px; font-size:clamp(30px,5vw,45px); letter-spacing:-.035em; }
+      .intro { margin:0 0 30px; color:var(--muted); line-height:1.55; }
+      .search { display:grid; grid-template-columns:1fr auto; gap:10px; }
+      input { min-width:0; padding:14px 15px; border:1.5px solid var(--line); border-radius:12px; font:inherit; text-transform:uppercase; }
+      input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 4px rgba(11,91,211,.1); }
+      button { padding:13px 22px; border:0; border-radius:12px; color:white; background:var(--blue); font-weight:800; cursor:pointer; }
+      button:disabled { opacity:.55; cursor:wait; }
+      .message { margin-top:18px; padding:13px 15px; border-radius:11px; color:#8e1b1b; background:#fff0f0; }
+      .result { margin-top:28px; padding-top:26px; border-top:1px solid var(--line); }
+      .status { display:inline-block; padding:7px 11px; border-radius:99px; color:#076849; background:#e2f8ef; font-size:13px; font-weight:800; }
+      dl { display:grid; grid-template-columns:150px 1fr; gap:14px; margin:24px 0 0; }
+      dt { color:var(--muted); font-size:13px; font-weight:700; }
+      dd { margin:0; overflow-wrap:anywhere; font-weight:650; }
+      .plans { margin-top:28px; padding-top:26px; border-top:1px solid var(--line); }
+      .plans h2 { margin:0 0 8px; font-size:23px; }
+      .plan-button { display:inline-block; margin-top:12px; padding:12px 17px; border-radius:12px; color:#fff; background:var(--blue); font-weight:800; text-decoration:none; }
+      .summary { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:14px 0; }
+      .summary-item { padding:10px; border-radius:10px; color:#334155; background:#f1f5f9; font-size:12px; font-weight:700; text-align:center; }
+      .timeline { display:flex; height:16px; overflow:hidden; margin:14px 0 20px; border-radius:99px; background:#e2e8f0; }
+      .segment { min-width:0; transition:width .2s; }.ontime{background:#087f5b}.upcoming{background:#d79b00}.overdue{background:#c62828}.completed{background:#0b5bd3}.cancelled{background:#94a3b8}
+      .plan-table { width:100%; border-collapse:collapse; font-size:12px; }.plan-table th,.plan-table td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.plan-table th{color:var(--muted);font-size:11px}.badge{display:inline-block;padding:4px 7px;border-radius:99px;font-size:11px;font-weight:800}.badge.ontime{color:#075c40;background:#e2f8ef}.badge.upcoming{color:#765600;background:#fff4cf}.badge.overdue{color:#8e1b1b;background:#fff0f0}.badge.completed{color:#073b84;background:#eaf3ff}.badge.cancelled{color:#475569;background:#e2e8f0}
+      [hidden] { display:none!important; }
+      @media(max-width:560px){ .search{grid-template-columns:1fr}.search button{width:100%}dl{grid-template-columns:1fr;gap:5px}dd{margin-bottom:12px} }
+    </style>
+  </head>
+  <body>
+    <nav class="top"><a class="back" href="<?= appUrl ?>?page=portal">← Voltar ao portal</a></nav>
+    <main class="card">
+      <div class="eyebrow">Acompanhamento</div>
+      <h1>Monitore sua solicitação</h1>
+      <p class="intro">Digite o protocolo fornecido após o envio do formulário.</p>
+      <form id="trackingForm" class="search">
+        <input id="protocolInput" aria-label="Protocolo" placeholder="GMR-20260911-A1B2C3D4" autocomplete="off" required>
+        <button id="searchButton" type="submit">Consultar</button>
+      </form>
+      <div id="message" class="message" hidden></div>
+      <section id="result" class="result" hidden>
+        <span id="status" class="status"></span>
+        <dl>
+          <dt>Protocolo</dt><dd id="resultProtocol"></dd>
+          <dt>Data de registro</dt><dd id="createdAt"></dd>
+          <dt>Chapter</dt><dd id="chapter"></dd>
+          <dt>Triagem inicial</dt><dd id="triage"></dd>
+        </dl>
+        <section id="plans" class="plans" hidden>
+          <h2>Planos de ação</h2>
+          <p id="plansIntro" class="intro"></p>
+          <a id="actionPlanLink" class="plan-button" href="#">Plano de ação</a>
+          <div id="planDetails" hidden>
+            <div id="timeline" class="timeline" aria-label="Situação dos planos"></div>
+            <div id="summary" class="summary"></div>
+            <table class="plan-table"><thead><tr><th>Nº</th><th>Plano</th><th>Responsável</th><th>Entrega</th><th>Status</th><th>Situação</th></tr></thead><tbody id="planRows"></tbody></table>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script>
+      const initialProtocol = <?!= JSON.stringify(requestId) ?>;
+      const form = document.getElementById('trackingForm');
+      const input = document.getElementById('protocolInput');
+      const button = document.getElementById('searchButton');
+      const message = document.getElementById('message');
+      const result = document.getElementById('result');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        search(input.value);
+      });
+
+      function search(protocol) {
+        message.hidden = true;
+        result.hidden = true;
+        button.disabled = true;
+        button.textContent = 'Consultando...';
+        google.script.run
+          .withSuccessHandler(showResult)
+          .withFailureHandler(showError)
+          .lookupRequest(protocol);
+      }
+
+      function showResult(data) {
+        button.disabled = false;
+        button.textContent = 'Consultar';
+        if (!data) return showError('Protocolo não encontrado. Verifique o código e tente novamente.');
+        document.getElementById('status').textContent = data.status;
+        document.getElementById('resultProtocol').textContent = data.protocol;
+        document.getElementById('createdAt').textContent = data.createdAt || '—';
+        document.getElementById('chapter').textContent = data.chapter || '—';
+        document.getElementById('triage').textContent = data.triage || '—';
+        renderPlans(data);
+        result.hidden = false;
+      }
+
+      function renderPlans(data) {
+        const section = document.getElementById('plans');
+        const link = document.getElementById('actionPlanLink');
+        const plans = Array.isArray(data.plans) ? data.plans : [];
+        section.hidden = false;
+        link.href = '<?= appUrl ?>?page=actionplan&id=' + encodeURIComponent(data.protocol);
+        if (!plans.length) {
+          document.getElementById('plansIntro').textContent = 'Esta solicitação ainda não possui planos de ação registrados.';
+          document.getElementById('planDetails').hidden = true;
+          link.textContent = 'Plano de ação';
+          return;
+        }
+        document.getElementById('plansIntro').textContent = plans.length + ' plano(s) de ação registrado(s).';
+        link.textContent = 'Adicionar plano de ação';
+        document.getElementById('planDetails').hidden = false;
+        const summary = data.planSummary || {};
+        const groups = [
+          ['A tempo', summary.onTime || 0, 'ontime'],
+          ['Próximo a vencer', summary.upcoming || 0, 'upcoming'],
+          ['Vencido', summary.overdue || 0, 'overdue'],
+          ['Concluído', summary.completed || 0, 'completed'],
+          ['Cancelado', summary.cancelled || 0, 'cancelled']
+        ];
+        const total = summary.total || plans.length;
+        document.getElementById('timeline').innerHTML = groups.filter(group => group[1]).map(group => '<span class="segment ' + group[2] + '" style="width:' + ((group[1] / total) * 100) + '%" title="' + escapeHtml(group[0]) + ': ' + group[1] + '"></span>').join('');
+        document.getElementById('summary').innerHTML = groups.map(group => '<div class="summary-item">' + escapeHtml(group[0]) + '<br><strong>' + group[1] + '</strong></div>').join('');
+        document.getElementById('planRows').innerHTML = plans.map(plan => '<tr><td>' + escapeHtml(plan.number || '—') + '</td><td>' + escapeHtml(plan.description || '—') + '</td><td>' + escapeHtml(plan.responsible || '—') + '<br><small>' + escapeHtml(plan.responsibleEmail || '') + '</small></td><td>' + escapeHtml(plan.dueDate || '—') + '</td><td>' + escapeHtml(plan.status || 'Pendente') + '</td><td><span class="badge ' + indicatorClass(plan.indicator) + '">' + escapeHtml(plan.indicator || 'Sem data') + '</span></td></tr>').join('');
+      }
+
+      function indicatorClass(value) {
+        return ({ 'A tempo':'ontime', 'Próximo a vencer':'upcoming', 'Vencido':'overdue', 'Concluído':'completed', 'Cancelado':'cancelled' })[value] || 'cancelled';
+      }
+      function escapeHtml(value) { const span = document.createElement('span'); span.textContent = value == null ? '' : value; return span.innerHTML; }
+
+      function showError(error) {
+        button.disabled = false;
+        button.textContent = 'Consultar';
+        message.textContent = error && error.message ? error.message : String(error);
+        message.hidden = false;
+      }
+
+      if (initialProtocol) {
+        input.value = initialProtocol;
+        search(initialProtocol);
+      }
+    </script>
+  </body>
+</html>

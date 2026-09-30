@@ -18,6 +18,14 @@ Escribo Google Apps Script y Java hoy. El rol no está atado a esos dos lenguaje
 
 ## Stable Knowledge
 
+### 2026-09-30 — Idioma permanente de las entregas de código
+
+Gaby indicó: "SIEMPRE DAME EL CÓDIGO EN ESPAÑOL". A partir de esta fecha, todo código nuevo o modificado que se entregue a Gaby debe usar español en comentarios, nombres nuevos que no dependan de una integración existente, mensajes al usuario y `Logger.log`. Se conservan sin traducir los nombres ya existentes de hojas, columnas, campos, URLs, APIs o contratos técnicos —por ejemplo `NC Internas`, `Planos de Ação`, `doGet` y `google.script.run`— cuando cambiarlos rompería el sistema o los datos actuales.
+
+### 2026-09-30 — Instructivo básico obligatorio en cada entrega de código
+
+Gaby indicó que siempre debe recibir un archivo llamado `Instructivo`. Toda entrega de código debe incluir un instructivo básico, sin código, que explique qué hojas, columnas, nombres, funciones o configuraciones no se deben cambiar para que el sistema continúe funcionando. Debe estar escrito en español y orientado a uso operativo, no técnico.
+
 ### Convención permanente de entrega de código
 
 **Regla de oficio, no de un ticket.** Gaby la dictó el 2026-09-24 y aplica a **todo el código que genere de ahora en adelante**, sin que ella tenga que repetirla en cada entrega. Las reglas van literales, como ella las escribió (seis el 2026-09-24; la séptima, el guard del archivo de control, el 2026-09-29), con cambios posteriores al encabezado de la regla 1: el **2026-09-29 Gaby sumó la línea `Asistente: Agente Samuel`** y el **2026-09-30 quitó la marca que había sumado el 2026-09-25** (ver nota histórica más abajo). La plantilla de abajo ya trae el bloque de autoría vigente, de dos líneas. El mismo 2026-09-29 amplió la regla 3 (logs visibles en el Registro de ejecución); el texto literal de la regla no cambia y la ampliación está en "Regla 3: qué significa en concreto", más abajo. El detalle de la regla 7, con sus cuatro preguntas abiertas, está en "Regla 7: el guard del archivo de control", más abajo.
