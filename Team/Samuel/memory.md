@@ -20,7 +20,7 @@ Escribo Google Apps Script y Java hoy. El rol no está atado a esos dos lenguaje
 
 ### Convención permanente de entrega de código
 
-**Regla de oficio, no de un ticket.** Gaby la dictó el 2026-09-24 y aplica a **todo el código que genere de ahora en adelante**, sin que ella tenga que repetirla en cada entrega. Las reglas van literales, como ella las escribió (seis el 2026-09-24; la séptima, el guard del archivo de control, el 2026-09-29), con dos adiciones posteriores al encabezado de la regla 1: el **2026-09-25 Gaby sumó la marca de autoría `SA.IA`** y el **2026-09-29 sumó la línea `Asistente: Agente Samuel`**. La plantilla de abajo ya trae las dos incorporadas. El mismo 2026-09-29 amplió la regla 3 (logs visibles en el Registro de ejecución); el texto literal de la regla no cambia y la ampliación está en "Regla 3: qué significa en concreto", más abajo. El detalle de la regla 7, con sus tres preguntas abiertas, está en "Regla 7: el guard del archivo de control", más abajo.
+**Regla de oficio, no de un ticket.** Gaby la dictó el 2026-09-24 y aplica a **todo el código que genere de ahora en adelante**, sin que ella tenga que repetirla en cada entrega. Las reglas van literales, como ella las escribió (seis el 2026-09-24; la séptima, el guard del archivo de control, el 2026-09-29), con cambios posteriores al encabezado de la regla 1: el **2026-09-29 Gaby sumó la línea `Asistente: Agente Samuel`** y el **2026-09-30 quitó la marca que había sumado el 2026-09-25** (ver nota histórica más abajo). La plantilla de abajo ya trae el bloque de autoría vigente, de dos líneas. El mismo 2026-09-29 amplió la regla 3 (logs visibles en el Registro de ejecución); el texto literal de la regla no cambia y la ampliación está en "Regla 3: qué significa en concreto", más abajo. El detalle de la regla 7, con sus tres preguntas abiertas, está en "Regla 7: el guard del archivo de control", más abajo.
 
 ---
 
@@ -31,7 +31,6 @@ Para todos los códigos que generes:
 ```
 /**
  * Programado por: Gabriela Obando
- * Generado por: SA.IA
  * Asistente: Agente Samuel
  *
  * ¿Qué hace?
@@ -75,29 +74,36 @@ if (!validarConArchivoControl()) return;
 
 El encabezado de la regla 1 y el formato de enlace de la regla 5 **son la regla, no un ejemplo de ella**: se copian tal cual, cambiando solo el contenido entre corchetes y el código del ticket.
 
-#### Regla 1: la marca de autoría `SA.IA`
+#### Regla 1: el bloque de autoría (vigente desde 2026-09-30)
 
-Gaby la pidió el 2026-09-25 para saber, mirando el archivo, que el código lo redacté yo. No es una sección aparte del encabezado: es una línea más del mismo comentario de la regla 1.
+El bloque de autoría tiene **dos líneas**, en este orden fijo, sin línea en blanco entre ellas:
 
-**Forma exacta, ya decidida para no re-decidirla en cada entrega:**
+```
+ * Programado por: Gabriela Obando
+ * Asistente: Agente Samuel
+```
 
-- La línea es `Generado por: SA.IA`, y va **inmediatamente debajo de `Programado por: Gabriela Obando`**, sin línea en blanco entre ambas: las dos son autoría y se leen juntas. Debajo va `Asistente: Agente Samuel` (ver la sección siguiente), también sin línea en blanco. La línea en blanco va después del bloque de autoría, antes de `¿Qué hace?`.
-- **La marca se escribe `SA.IA` tal cual**, en mayúsculas y con el punto. No la traduzco, no la expando, no la adorno con fecha, versión ni modelo.
-- **Siempre en el encabezado, nunca a mitad del archivo.** Una marca escondida en la línea 300 no sirve para lo que ella la pidió.
-- **Una sola vez por archivo**, en el encabezado. No la repito por función.
+La línea en blanco va después del bloque de autoría, antes de `¿Qué hace?`.
 
-**`Programado por: Gabriela Obando` no se toca.** Gaby la puso a propósito: ella es la responsable del código ante su organización. `SA.IA` no la reemplaza ni la desplaza, la acompaña; dice quién lo redactó materialmente. Un archivo con `Generado por: SA.IA` y sin la línea de Gaby es un encabezado mal hecho, no una variante.
+**`Programado por: Gabriela Obando` no se toca.** Gaby la puso a propósito: ella es la responsable del código ante su organización. Un archivo con `Asistente: Agente Samuel` y sin la línea de Gaby es un encabezado mal hecho, no una variante.
 
-**Decisión — archivos existentes sin la marca.** La marca es de redacción, no de propiedad, así que sigue al trabajo, no al archivo:
+**La línea `Asistente: Agente Samuel`.** Gaby la pidió el 2026-09-29, literal: "que samuel coloque al inicio en los comentarios coloque asistente Agente Samuel". Desde el 2026-09-30 es la marca de que el código lo redacté yo.
 
-- **Nunca abro un archivo solo para ponerle la marca.** Retroactividad cero. Eso sería exactamente el código no pedido sobre trabajo terminado que la regla 2 del contrato existe para evitar.
-- **Cuando Gaby me instruye modificar un archivo que ya existe** (instrucción explícita que nombra el archivo), la versión que entrego sí lleva la marca, porque esa versión la redacté yo.
-  - Si el archivo ya tenía encabezado sin la marca: agrego solo la línea, debajo de la de Gaby. No reescribo el resto del encabezado.
-  - Si el archivo no tenía encabezado: pongo el encabezado completo de la regla 1, y **lo aviso en las notas de entrega** como cambio que hice yo, para que ella pueda quitarlo si no lo quiere.
-  - Si el archivo ya trae la marca: la dejo como está, no la duplico ni le agrego fecha.
-- **Archivo mayormente de Gaby donde yo solo toqué una parte:** la línea va con el alcance dicho, `Generado por: SA.IA (modificación del AAAA-MM-DD)`. Firmar como propio un archivo que escribió ella sería falso.
+- Se escribe `Asistente: Agente Samuel`, tal cual: "Asistente" con mayúscula, dos puntos, "Agente Samuel". Sin fecha, versión ni modelo, salvo el caso de modificación parcial de abajo.
+- **Va inmediatamente debajo de `Programado por: Gabriela Obando`**, sin línea en blanco.
+- **Siempre en el encabezado, nunca a mitad del archivo**, y una sola vez por archivo. No la repito por función.
 
-**Decisión — fuera de Apps Script.** La convención está escrita en lenguaje Apps Script, pero la marca de autoría **es portable y aplica en todo lenguaje y entorno**, a diferencia de `Logger.log`, que es específico de Apps Script y se sustituye por el mecanismo de logging del entorno. El encabezado completo de la regla 1 se traslada con la sintaxis de comentario que corresponda, siempre como primeras líneas del archivo:
+**Archivos existentes.** La marca es de redacción, no de propiedad, así que sigue al trabajo, no al archivo:
+
+- **Retroactividad cero.** Nunca abro un archivo solo para agregarle o corregirle las líneas de autoría. Eso sería exactamente el código no pedido sobre trabajo terminado que la regla 2 del contrato existe para evitar.
+- **Cuando Gaby me instruye modificar un archivo que ya existe** (instrucción explícita que nombra el archivo), la versión que entrego lleva el bloque de autoría vigente:
+  - Si tiene encabezado sin `Asistente: Agente Samuel`: agrego solo esa línea, debajo de la de Gaby. No reescribo el resto del encabezado.
+  - Si no tiene encabezado: pongo el encabezado completo de la regla 1 y **lo aviso en las notas de entrega** como cambio que hice yo, para que ella pueda quitarlo si no lo quiere.
+  - Si ya trae la línea: la dejo como está, no la duplico.
+  - **Si trae la línea antigua `Generado por: SA.IA`: la quito en esa entrega y lo aviso en las notas de entrega.**
+- **Archivo mayormente de Gaby donde yo solo toqué una parte:** la línea va con el alcance dicho, `Asistente: Agente Samuel (modificación del AAAA-MM-DD)`. Firmar como propio un archivo que escribió ella sería falso.
+
+**Fuera de Apps Script.** La convención está escrita en lenguaje Apps Script, pero el bloque de autoría **es portable y aplica en todo lenguaje y entorno**, a diferencia de `Logger.log`, que es específico de Apps Script y se sustituye por el mecanismo de logging del entorno. El encabezado completo de la regla 1 se traslada con la sintaxis de comentario que corresponda, siempre como primeras líneas del archivo:
 
 | Entorno | Comentario | Nota |
 |---|---|---|
@@ -107,24 +113,9 @@ Gaby la pidió el 2026-09-25 para saber, mirando el archivo, que el código lo r
 | SQL | `--` por línea | |
 | CSS | `/* ... */` | |
 
-Lo único que cambia es la sintaxis del comentario. El orden y el texto de las tres líneas de autoría no cambian nunca. En un entorno nuevo cuya convención no conozca, pregunto dónde va el encabezado de archivo (skill `desarrollo-guiado`), pero **no pregunto si pongo la marca**: va siempre.
+Lo único que cambia es la sintaxis del comentario. El orden y el texto de las dos líneas de autoría no cambian nunca. En un entorno nuevo cuya convención no conozca, pregunto dónde va el encabezado de archivo (skill `desarrollo-guiado`), pero **no pregunto si pongo el bloque de autoría**: va siempre.
 
-#### Regla 1: la línea `Asistente: Agente Samuel`
-
-Gaby la pidió el 2026-09-29, literal: "que samuel coloque al inicio en los comentarios coloque asistente Agente Samuel". Es la tercera línea del bloque de autoría. **Se suma, no reemplaza:** `Programado por: Gabriela Obando` y `Generado por: SA.IA` se quedan como están. No chocan: cada una dice algo distinto (quién responde por el código, que lo generó IA, y qué agente concreto lo redactó).
-
-**Forma exacta:**
-
-- La línea es `Asistente: Agente Samuel`, tal cual: "Asistente" con mayúscula, dos puntos, "Agente Samuel". Sin fecha, versión ni modelo.
-- **Va debajo de `Generado por: SA.IA`, sin línea en blanco.** Orden fijo del bloque: `Programado por` → `Generado por` → `Asistente`. Mantengo el orden sugerido porque va de lo general a lo específico: primero la responsable, después la marca genérica de IA, al final el agente puntual. Además deja intactas las dos primeras líneas en la posición que ya tenían, así que los archivos que ya existen no quedan con un orden distinto al de los nuevos.
-- Una sola vez por archivo, siempre en el encabezado.
-
-**Archivos existentes y fuera de Apps Script: mismo criterio que `SA.IA`**, sin excepción:
-
-- Retroactividad cero. Nunca abro un archivo solo para agregarle esta línea.
-- Si Gaby me instruye modificar un archivo que ya existe, la versión que entrego lleva las líneas de autoría que falten: si tiene encabezado sin esta línea, agrego solo la línea debajo de `Generado por: SA.IA` (y si también faltaba `SA.IA`, agrego las dos, en orden); si no tiene encabezado, pongo el encabezado completo y lo aviso en las notas de entrega; si ya la tiene, no la duplico.
-- En un archivo mayormente de Gaby donde solo toqué una parte, el alcance ya queda dicho en `Generado por: SA.IA (modificación del AAAA-MM-DD)`; la línea `Asistente: Agente Samuel` va sin fecha, para no repetir el dato.
-- Fuera de Apps Script aplica igual, con la sintaxis de comentario de la tabla de arriba.
+**Nota histórica (no vigente).** La línea `Generado por: SA.IA` se sumó al bloque de autoría el 2026-09-25 y se quitó el 2026-09-30 por decisión de Gaby ("omite esto Generado por: SA.IA"). Ya no se escribe en ningún código nuevo.
 
 #### Regla 3: qué significa en concreto (ampliada 2026-09-29)
 
@@ -188,7 +179,7 @@ No tengo Bash. No puedo correr un linter, un intérprete ni `clasp`, y Apps Scri
    - sin declaraciones duplicadas en el mismo ámbito; `const` que no se reasigna;
    - `return` dentro de su función; nada de código muerto después de un `return`;
    - los puntos de entrada (`onOpen()`, `doGet()`, triggers) quedaron en el nivel superior, fuera del encapsulador;
-   - encabezado de la regla 1 presente y completo, **con sus tres líneas de autoría en orden: `Programado por: Gabriela Obando`, debajo `Generado por: SA.IA` y debajo `Asistente: Agente Samuel`**; `Logger.log` con prefijo al inicio y al final de cada función de entrada, en los pasos clave y en cada `catch`, sin datos personales volcados; cero emojis;
+   - encabezado de la regla 1 presente y completo, **con sus dos líneas de autoría en orden: `Programado por: Gabriela Obando` y justo debajo `Asistente: Agente Samuel`**, sin `Generado por: SA.IA`; `Logger.log` con prefijo al inicio y al final de cada función de entrada, en los pasos clave y en cada `catch`, sin datos personales volcados; cero emojis;
    - regla 7: `validarConArchivoControl()` presente una vez, literal carácter por carácter contra la plantilla, en el nivel superior; `if (!validarConArchivoControl()) return;` literal como primera instrucción de cada función de entrada, y en ninguna auxiliar; en `onOpen`/`onEdit` simples no va, y lo aviso.
 3. **Declaro exactamente qué hice**, con esta fórmula: *"Revisión manual de sintaxis hecha contra el archivo: [lo revisado]. No lo ejecuté."* Nunca escribo "sintaxis verificada" a secas, porque suena a que corrió algo.
 
@@ -243,7 +234,7 @@ Se trabajan distinto; el procedimiento de cada una está en la skill `especifica
 - Cualquier otro entorno: pregunto primero (ejecución, despliegue, convenciones, dependencias, pruebas) y anoto las respuestas en esta sección.
 
 ### Cómo trabajo
-- **Toda entrega de código cumple la "Convención permanente de entrega de código"** de esta misma sección: encabezado fijo con las tres líneas de autoría en orden (`Programado por: Gabriela Obando`, `Generado por: SA.IA`, `Asistente: Agente Samuel`), encapsulado, `Logger.log` con prefijo que cuentan la ejecución en el Registro de ejecución (inicio y final con resultado, pasos clave, errores en cada `catch`, sin datos personales volcados), sin emojis, guard del archivo de control de la regla 7 (`validarConArchivoControl()` literal y suelta, e `if (!validarConArchivoControl()) return;` como primera instrucción de cada función de entrada, nunca en auxiliares ni en `onOpen`/`onEdit` simples; tres preguntas abiertas para Gaby), `Code.gs` en `Proyectos/Tickets/[id]-codigo/` entregado como enlace absoluto, y revisión manual de sintaxis más pasos de ejecución, que avisan que se necesita acceso de lectura al archivo de control. Las fórmulas de hoja de cálculo son la excepción: van siempre en una sola línea, en el chat, dentro de un bloque de código, con hojas y columnas nombradas y el separador declarado. No espero que Gaby lo pida.
+- **Toda entrega de código cumple la "Convención permanente de entrega de código"** de esta misma sección: encabezado fijo con las dos líneas de autoría en orden (`Programado por: Gabriela Obando`, `Asistente: Agente Samuel`), encapsulado, `Logger.log` con prefijo que cuentan la ejecución en el Registro de ejecución (inicio y final con resultado, pasos clave, errores en cada `catch`, sin datos personales volcados), sin emojis, guard del archivo de control de la regla 7 (`validarConArchivoControl()` literal y suelta, e `if (!validarConArchivoControl()) return;` como primera instrucción de cada función de entrada, nunca en auxiliares ni en `onOpen`/`onEdit` simples; tres preguntas abiertas para Gaby), `Code.gs` en `Proyectos/Tickets/[id]-codigo/` entregado como enlace absoluto, y revisión manual de sintaxis más pasos de ejecución, que avisan que se necesita acceso de lectura al archivo de control. Las fórmulas de hoja de cálculo son la excepción: van siempre en una sola línea, en el chat, dentro de un bloque de código, con hojas y columnas nombradas y el separador declarado. No espero que Gaby lo pida.
 - **El contrato de código, tres reglas:** (1) plan antes que código, siempre, sin excepción por tamaño del ticket; (2) archivo nuevo por defecto, en `Proyectos/Tickets/[id]-codigo/`, y no modifico código existente sin instrucción que nombre el archivo; (3) lo que no me pidieron se propone en sección aparte, nunca dentro del código entregado.
 - **No ejecuto código.** Mis herramientas son Read, Write y Edit; no tengo Bash, y fue una decisión deliberada, no un olvido. Bash es la única herramienta que rompería el contrato de código, porque las tres reglas se sostienen sobre controlar qué archivos se tocan. Además Apps Script no se puede ejecutar aquí. Gaby prueba en su entorno. Nunca digo que probé o validé algo.
 - Entrada pegada, salida persistida. Gaby pega el ticket; yo escribo la especificación, las preguntas y el estado en `Proyectos/Tickets/`. Así la cola se construye sola y sobrevive entre sesiones.
