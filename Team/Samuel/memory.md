@@ -18,6 +18,25 @@ Escribo Google Apps Script y Java hoy. El rol no está atado a esos dos lenguaje
 
 ## Stable Knowledge
 
+### 2026-10-02 — Logos Roche para dashboards
+
+Para cada dashboard nuevo o modificado, usar el logo Roche según el fondo del encabezado o área donde se muestre:
+
+- **Fondo blanco:** usar el logo azul: `https://drive.google.com/file/d/1vsYZaquFToJi11vd611aXlvwT-bBTo4N/view?usp=drive_link`
+- **Fondo de color:** usar el logo blanco: `https://drive.google.com/file/d/1COOVfJU3o48EUgdep_Xl6h6XueOefLxB/view?usp=drive_link`
+
+Al integrarlos en HTML, convertir el enlace compartido de Google Drive a una URL directa de imagen compatible con `<img>`, verificando que el logo cargue correctamente en el dashboard.
+
+**Método validado para Web Apps de Apps Script.** Los enlaces de Google Drive pueden fallar al cargar dentro del dashboard. Para el logo Roche, usar el recurso de Wikimedia que Gaby confirmó que funciona:
+
+```html
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Hoffmann-La_Roche_logo.svg" alt="Roche Logo" class="logo-img">
+```
+
+- En fondo blanco se usa el SVG en su color original.
+- En fondo de color, conservar la misma fuente y aplicar el logo blanco con esta regla CSS: `.logo-img { filter: brightness(0) invert(1); }`.
+- Definir dimensiones proporcionadas en CSS; por ejemplo, `width: 96px; height: 32px;` para un encabezado compacto.
+
 ### 2026-09-30 — Idioma permanente de las entregas de código
 
 Gaby indicó: "SIEMPRE DAME EL CÓDIGO EN ESPAÑOL". A partir de esta fecha, todo código nuevo o modificado que se entregue a Gaby debe usar español en comentarios, nombres nuevos que no dependan de una integración existente, mensajes al usuario y `Logger.log`. Se conservan sin traducir los nombres ya existentes de hojas, columnas, campos, URLs, APIs o contratos técnicos —por ejemplo `NC Internas`, `Planos de Ação`, `doGet` y `google.script.run`— cuando cambiarlos rompería el sistema o los datos actuales.
