@@ -18,6 +18,92 @@ Escribo Google Apps Script y Java hoy. El rol no está atado a esos dos lenguaje
 
 ## Stable Knowledge
 
+### 2026-09-30 — Idioma permanente de las entregas de código
+
+Gaby indicó: "SIEMPRE DAME EL CÓDIGO EN ESPAÑOL". A partir de esta fecha, todo código nuevo o modificado que se entregue a Gaby debe usar español en comentarios, nombres nuevos que no dependan de una integración existente, mensajes al usuario y `Logger.log`. Se conservan sin traducir los nombres ya existentes de hojas, columnas, campos, URLs, APIs o contratos técnicos —por ejemplo `NC Internas`, `Planos de Ação`, `doGet` y `google.script.run`— cuando cambiarlos rompería el sistema o los datos actuales.
+
+### 2026-09-30 — Instructivo básico obligatorio en cada entrega de código
+
+Gaby indicó que siempre debe recibir un archivo llamado `Instructivo`. Toda entrega de código debe incluir un instructivo básico, sin código, que explique qué hojas, columnas, nombres, funciones o configuraciones no se deben cambiar para que el sistema continúe funcionando. Debe estar escrito en español y orientado a uso operativo, no técnico.
+
+### 2026-10-01 — Proceso de Calidad BR: no conformidades y planes de acción
+
+**Contexto.** Gaby construye una Web App de Google Apps Script para el proceso de calidad BR. El proyecto operativo se llama `Gerenciamento de Melhoria e Resolução` y registra no conformidades internas y de proveedores. La entrega de código asociada se encuentra en `Proyectos/Tickets/BCAT-BR-codigo/`.
+
+**Arquitectura vigente.**
+
+- `general.gs`: portal, formularios, registro de NC, correos, seguimiento y dashboard.
+- `PlanAction.gs`: registro de planes de acción múltiples.
+- `ActionPlan.html`: formulario abierto de planes de acción.
+- `consolidado.gs` o `ConsolidarNCInternas.gs`: consolida internas y proveedores y crea el menú manual de consolidación.
+- `Tracking.html`: consulta de una solicitud y visualización de sus planes.
+- Las evidencias se guardan en la carpeta de Drive configurada por la aplicación.
+
+**Hojas fuente que no se deben renombrar.**
+
+- `NC Internas`
+- `NC Fornecedores`
+- `Planos de Ação`
+- `NC Internas Consolidado`
+- `NC Fornecedores Consolidado`
+- `Chapters`
+- `Fornecedores`
+
+**No conformidades internas.**
+
+- El protocolo interno se genera como `NC.BR-001`, `NC.BR-002`, etc.
+- Se guardan datos de reportante, Chapter, fuente, descripción, triagem, anexos y estado inicial `Novo`.
+- La columna `Nome` de `NC Internas` puede quedar vacía porque el formulario actual no pide nombre. No se debe intentar completarla automáticamente.
+
+**No conformidades de proveedores.**
+
+- El protocolo acordado es diario y consecutivo: `SA-díames.consecutivo/año`.
+- Ejemplos: `SA-309.1/26`, `SA-309.2/26`, `SA-309.3/26`; al día siguiente, por ejemplo, `SA-0110.1/26`.
+- El consecutivo debe estar protegido por `LockService` para evitar duplicados simultáneos.
+
+**Planes de acción.**
+
+- Un protocolo puede tener uno o varios planes, una fila por plan en `Planos de Ação`.
+- El correo de confirmación debe tener un botón `Plano de ação` que abra el formulario con el protocolo prellenado.
+- El enlace es abierto: quien reciba o reenvíe el correo puede registrar planes para ese protocolo. Este riesgo fue aceptado por Gaby.
+- El ID queda bloqueado para usuarios normales. Solo los correos definidos en la lista de autorización del código pueden modificarlo. La lista inicial incluye `gabriela.obando_angulo@external.roche.com`.
+- El backend debe validar la autorización; no basta con bloquear el campo en HTML.
+- Cada plan requiere descripción, responsable, correo del responsable y fecha de entrega. El estado inicial es `Pendente`.
+- Estados permitidos: `Pendente`, `Em andamento`, `Concluído`, `Cancelado`.
+
+**Encabezados obligatorios de `Planos de Ação`.** Deben existir exactamente, en este orden:
+
+1. `Protocolo`
+2. `Número do plano`
+3. `Descrição do plano de ação`
+4. `Responsável`
+5. `E-mail responsável`
+6. `Data de entrega`
+7. `Status`
+8. `Data de criação`
+9. `Data de atualização`
+
+No cambiar valores ni encabezados sin adaptar el código. Los formatos anteriores en español (`numero de acciones`, `descripción de acción`, `nome`, `correo`) causaron que el monitor no reconociera los planes.
+
+**Consolidación.**
+
+- Se ejecuta automáticamente al guardar planes y también manualmente desde `Consolidar > Consolidar internas e fornecedores`.
+- La función manual es `consolidarTudo()`.
+- `NC Internas Consolidado` y `NC Fornecedores Consolidado` tienen una fila por plan y repiten los datos de la NC.
+- Las NC sin planes se conservan con columnas de plan vacías.
+- En `NC Internas Consolidado` se excluye la columna `Nome` solo de la salida consolidada; la hoja fuente no se modifica.
+- Ambos consolidados deben incluir una columna llamada exactamente `Data de entrega`.
+
+**Monitor.**
+
+- El monitor debe leer exclusivamente `NC Internas Consolidado` y `NC Fornecedores Consolidado`, no las hojas fuente ni `Planos de Ação` directamente.
+- Antes de consultar una NC nueva, se debe ejecutar la consolidación; de lo contrario no aparecerá en el monitor.
+- Si no hay planes, debe mostrar un botón `Plano de ação` con el protocolo cargado.
+- Si hay planes, debe mostrar tabla, responsables, fechas y una barra/resumen visual.
+- Reglas de plazo: `Concluído` y `Cancelado` se muestran como cerrados; un plan `Pendente` o `Em andamento` con fecha pasada es `Vencido`; con uno a cinco días restantes es `Próximo a vencer`; con más de cinco días es `A tempo`.
+
+**Instructivo.** La entrega actual tiene `Instructivo.md`. Toda entrega futura del proceso debe incluir un archivo llamado `Instructivo`, básico, en español y sin código, que explique las operaciones manuales y qué nombres no se deben cambiar.
+
 ### Convención permanente de entrega de código
 
 **Regla de oficio, no de un ticket.** Gaby la dictó el 2026-09-24 y aplica a **todo el código que genere de ahora en adelante**, sin que ella tenga que repetirla en cada entrega. Las reglas van literales, como ella las escribió (seis el 2026-09-24; la séptima, el guard del archivo de control, el 2026-09-29), con cambios posteriores al encabezado de la regla 1: el **2026-09-29 Gaby sumó la línea `Asistente: Agente Samuel`** y el **2026-09-30 quitó la marca que había sumado el 2026-09-25** (ver nota histórica más abajo). La plantilla de abajo ya trae el bloque de autoría vigente, de dos líneas. El mismo 2026-09-29 amplió la regla 3 (logs visibles en el Registro de ejecución); el texto literal de la regla no cambia y la ampliación está en "Regla 3: qué significa en concreto", más abajo. El detalle de la regla 7, con sus cuatro preguntas abiertas, está en "Regla 7: el guard del archivo de control", más abajo. El **2026-10-02 Gaby reconfirmó la plantilla de la regla 1** (dictada de nuevo, idéntica carácter por carácter a la de abajo, así que no se reescribió), le sumó seis "Reglas importantes" literales que van debajo de la plantilla, y agregó dos cosas nuevas: comentarios internos solo para lógica no obvia y un mini manual de uso en cada entrega (ver "Comentarios internos" y "Mini manual de uso", más abajo).

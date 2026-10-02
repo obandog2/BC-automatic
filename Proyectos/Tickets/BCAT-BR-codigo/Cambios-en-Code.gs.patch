@@ -1,0 +1,17 @@
+--- Code.gs actual
++++ Code.gs con enlace a planes de acción
+@@ doGet(event)
+-const files = { portal: 'Portal', form: 'Index', supplier: 'Supplier', tracking: 'Tracking', dashboard: 'Dashboard' };
++const files = { portal: 'Portal', form: 'Index', supplier: 'Supplier', tracking: 'Tracking', dashboard: 'Dashboard', actionplan: 'ActionPlan' };
+-const titles = { portal: 'Portal de Qualidade', form: 'Gerenciamento de Melhoria e Resolução', supplier: 'Não Conformidades de Fornecedores', tracking: 'Monitorar solicitação', dashboard: 'Dashboard de Não Conformidades' };
++const titles = { portal: 'Portal de Qualidade', form: 'Gerenciamento de Melhoria e Resolução', supplier: 'Não Conformidades de Fornecedores', tracking: 'Monitorar solicitação', dashboard: 'Dashboard de Não Conformidades', actionplan: 'Plano de Ação' };
+
+@@ sendEmails_(record, protocol, files)
+ // Después de crear trackingUrl, agregue:
++const actionPlanUrl = ScriptApp.getService().getUrl() + '?page=actionplan&id=' + encodeURIComponent(protocol);
++const actionPlanButton = '<p><a href="' + escape_(actionPlanUrl) + '" style="display:inline-block;padding:12px 18px;border-radius:8px;background:#0b5bd3;color:#ffffff;font-weight:bold;text-decoration:none">Plano de ação</a></p>';
+
+ // En el htmlBody del primer MailApp.sendEmail (correo de confirmación al reportante),
+ // agregue actionPlanButton antes del enlace de monitorar:
+-... + attachments + '<p><a href="' + escape_(trackingUrl) + '">Monitorar sua solicitação</a></p>')
++... + attachments + actionPlanButton + '<p><a href="' + escape_(trackingUrl) + '">Monitorar sua solicitação</a></p>')
