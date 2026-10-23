@@ -1,492 +1,330 @@
 /**
- * BCAT-0016 - Homologación y aprendizaje supervisado de marcas.
+ * Programado por: Gabriela Obando
+ * Asistente: Agente Samuel
  *
- * Diccionario:
- *   Columna A: variante recibida.
- *   Columna B: marca oficial confirmada.
+ * ¿Qué hace?
+ * Homologa las marcas de la columna H y aprende variantes seguras en el diccionario.
+ *
+ * Validaciones para ejecutar homologarMarcas():
+ * 1) La hoja 2026 debe existir en el archivo destino y la columna H debe contener una marca por fila.
+ * 2) La hoja Marcas Homologadas debe conservar A como variante y B como marca oficial.
+ * 3) La hoja update del archivo de control debe conservar B2 con el texto exacto update.
  */
 
-const CONFIG_MARCAS = Object.freeze({
-  ARCHIVO_DESTINO_ID: '1iqn2M5Z_iJcM-D9oN95xoV0qVfjjDv8XBHNZ8apCb7Q',
-  HOJA_DESTINO: '2026',
-  COLUMNA_MARCA: 8,
-  PRIMERA_FILA_DATOS: 2,
-
-  ARCHIVO_DICCIONARIO_ID: '1fSKIi1za_nTEnQSQSD-tlMT9RDuJs9B2yvXY3DVoy5o',
-  HOJA_DICCIONARIO: 'Marcas Homologadas',
-  PRIMERA_FILA_DICCIONARIO: 2,
-
-  COLOR_PENDIENTE: '#f4cccc',
-  COLOR_APROBADO: '#ffffff',
-  LONGITUD_MINIMA_PREFIJO: 4,
-  PROPORCION_MINIMA_PREFIJO: 0.75,
-  LONGITUD_MINIMA_FIRMA: 3,
-  LONGITUD_MINIMA_SIMILITUD: 5,
-  CONFIANZA_MINIMA: 0.86,
-  DIFERENCIA_MINIMA: 0.12
-});
-
 function homologarMarcas() {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  if (!validarConArchivoControl()) return;
+  return SistemaHomologacionMarcas.ejecutar();
+}
 
-  try {
-    logMarcas_('Iniciando homologación de marcas.');
+const SistemaHomologacionMarcas = (function() {
+  const CONFIGURACION = Object.freeze({
+    prefijoLog: '[BCAT-0016]',
+    idDestino: '1iqn2M5Z_iJcM-D9oN95xoV0qVfjjDv8XBHNZ8apCb7Q',
+    hojaDestino: '2026',
+    columnaMarca: 8,
+    primeraFilaDatos: 2,
+    idDiccionario: '1fSKIi1za_nTEnQSQSD-tlMT9RDuJs9B2yvXY3DVoy5o',
+    hojaDiccionario: 'Marcas Homologadas',
+    colorPendiente: '#f4cccc',
+    colorAprobado: '#ffffff',
+    longitudMinimaPrefijo: 4,
+    proporcionMinimaPrefijo: 0.75,
+    longitudMinimaFirma: 3,
+    confianzaMinima: 0.86,
+    diferenciaMinima: 0.12
+  });
 
-    const hojaDestino = obtenerHojaObligatoria_(
-      CONFIG_MARCAS.ARCHIVO_DESTINO_ID,
-      CONFIG_MARCAS.HOJA_DESTINO
-    );
-    const hojaDiccionario = obtenerHojaObligatoria_(
-      CONFIG_MARCAS.ARCHIVO_DICCIONARIO_ID,
-      CONFIG_MARCAS.HOJA_DICCIONARIO
-    );
+  function ejecutar() {
+    let bloqueo;
+    try {
+      Logger.log(CONFIGURACION.prefijoLog + ' Inicio de homologación de marcas.');
+      bloqueo = LockService.getScriptLock();
+      bloqueo.waitLock(30000);
 
-    const modelo = crearModeloMarcas_(hojaDiccionario);
-    limpiarFilasAprobadas_(hojaDiccionario, modelo.filasAprobadasEnRojo);
-    marcarFilasParaRevision_(hojaDiccionario, modelo.filasParaRevision);
+      const hojaDestino = obtenerHoja_(CONFIGURACION.idDestino, CONFIGURACION.hojaDestino);
+      const hojaDiccionario = obtenerHoja_(CONFIGURACION.idDiccionario, CONFIGURACION.hojaDiccionario);
+      const modelo = crearModelo_(hojaDiccionario);
 
-    logMarcas_('Diccionario cargado.', {
-      relacionesConfirmadas: modelo.totalRelaciones,
-      pendientesExistentes: modelo.totalPendientes,
-      conflictos: modelo.conflictos.length,
-      filasMarcadasEnRojo: modelo.filasParaRevision.length
-    });
-
-    modelo.conflictos.forEach(function(conflicto) {
-      logMarcas_('CONFLICTO: una variante apunta a más de una marca y no se utilizará.', {
-        variante: conflicto.variante,
-        marcas: conflicto.marcas.join(' / ')
+      pintarFilas_(hojaDiccionario, modelo.filasAprobadasEnRojo, CONFIGURACION.colorAprobado);
+      pintarFilas_(hojaDiccionario, modelo.filasRevision, CONFIGURACION.colorPendiente);
+      Logger.log(CONFIGURACION.prefijoLog + ' Diccionario cargado. | relaciones: ' + modelo.relaciones + ' | pendientes: ' + modelo.pendientes + ' | conflictos: ' + modelo.conflictos.length);
+      modelo.conflictos.forEach(function(variante) {
+        Logger.log(CONFIGURACION.prefijoLog + ' CONFLICTO: la variante no se aplicará hasta corregir el diccionario. | variante: ' + variante);
       });
-    });
 
-    const resultado = procesarMarcas_(hojaDestino, modelo);
-    const nuevasPendientes = registrarPendientes_(
-      hojaDiccionario,
-      resultado.pendientes,
-      modelo.variantesExistentes
-    );
+      const resultado = procesarColumnaH_(hojaDestino, modelo);
+      const aprendizaje = guardarAprendizajes_(hojaDiccionario, modelo, resultado.aprendizajes, resultado.pendientes);
+      const resumen = {
+        filasRevisadas: resultado.filasRevisadas,
+        homologadas: resultado.homologadas,
+        aprendidas: aprendizaje.aprendidas,
+        pendientesNuevas: aprendizaje.pendientes,
+        conflictos: modelo.conflictos.length,
+        formulasOmitidas: resultado.formulasOmitidas,
+        vacias: resultado.vacias
+      };
+      Logger.log(CONFIGURACION.prefijoLog + ' Homologación terminada. | ' + JSON.stringify(resumen));
+      return resumen;
+    } catch (error) {
+      Logger.log(CONFIGURACION.prefijoLog + ' ERROR en homologarMarcas. | motivo: ' + error.message);
+      throw error;
+    } finally {
+      if (bloqueo && bloqueo.hasLock()) bloqueo.releaseLock();
+    }
+  }
 
-    const resumen = {
-      filasRevisadas: resultado.filasRevisadas,
-      homologadas: resultado.homologadas,
-      coincidenciasExactas: resultado.metodos.exacta,
-      coincidenciasPorPrefijo: resultado.metodos.prefijo,
-      coincidenciasPorFirma: resultado.metodos.firma,
-      coincidenciasPorSimilitud: resultado.metodos.similitud,
-      pendientesNuevas: nuevasPendientes,
-      pendientesYaRegistradas: resultado.pendientesYaRegistradas,
-      vacias: resultado.vacias
+  function obtenerHoja_(idArchivo, nombreHoja) {
+    const hoja = SpreadsheetApp.openById(idArchivo).getSheetByName(nombreHoja);
+    if (!hoja) throw new Error('No se encontró la hoja obligatoria: ' + nombreHoja + '.');
+    return hoja;
+  }
+
+  function crearModelo_(hoja) {
+    const modelo = {
+      exactas: new Map(), formas: [], firmas: new Map(), filas: new Map(), existentes: new Set(),
+      filasAprobadasEnRojo: [], filasRevision: [], conflictos: [], relaciones: 0, pendientes: 0
     };
+    const ultimaFila = hoja.getLastRow();
+    if (ultimaFila < 2) return modelo;
 
-    logMarcas_('Homologación terminada.', resumen);
-    return resumen;
-  } catch (error) {
-    logMarcas_('ERROR: no se pudo completar la homologación.', {
-      motivo: error.message
-    });
-    throw error;
-  } finally {
-    lock.releaseLock();
-  }
-}
+    const cantidad = ultimaFila - 1;
+    const rango = hoja.getRange(2, 1, cantidad, 2);
+    const valores = rango.getDisplayValues();
+    const fondos = rango.getBackgrounds();
+    const destinos = new Map();
+    const filasPorVariante = new Map();
+    const nombresCanonicos = new Map();
 
-function crearModeloMarcas_(hoja) {
-  const ultimaFila = hoja.getLastRow();
-  const modelo = {
-    exactas: new Map(),
-    formas: [],
-    firmas: new Map(),
-    variantesExistentes: new Set(),
-    conflictos: [],
-    filasAprobadasEnRojo: [],
-    filasParaRevision: [],
-    totalRelaciones: 0,
-    totalPendientes: 0
-  };
+    valores.forEach(function(fila, indice) {
+      const variante = normalizar_(fila[0]);
+      const marca = String(fila[1] || '').trim();
+      const numeroFila = indice + 2;
+      if (!variante) return;
 
-  if (ultimaFila < CONFIG_MARCAS.PRIMERA_FILA_DICCIONARIO) return modelo;
+      modelo.existentes.add(variante);
+      if (!modelo.filas.has(variante)) modelo.filas.set(variante, { fila: numeroFila, homologada: marca });
+      if (!filasPorVariante.has(variante)) filasPorVariante.set(variante, []);
+      filasPorVariante.get(variante).push(numeroFila);
 
-  const cantidad = ultimaFila - CONFIG_MARCAS.PRIMERA_FILA_DICCIONARIO + 1;
-  const rango = hoja.getRange(CONFIG_MARCAS.PRIMERA_FILA_DICCIONARIO, 1, cantidad, 2);
-  const valores = rango.getDisplayValues();
-  const fondos = rango.getBackgrounds();
-  const nombresCanonicos = new Map();
-  const destinosPorVariante = new Map();
-  const filasPorVariante = new Map();
-  const formasTemporales = [];
-
-  valores.forEach(function(fila, indice) {
-    const varianteOriginal = String(fila[0] || '').trim();
-    const marcaOficial = String(fila[1] || '').trim();
-    const variante = normalizarMarca_(varianteOriginal);
-    const claveCanonica = normalizarMarca_(marcaOficial);
-    const numeroFila = CONFIG_MARCAS.PRIMERA_FILA_DICCIONARIO + indice;
-
-    if (variante) modelo.variantesExistentes.add(variante);
-
-    if (!varianteOriginal || !marcaOficial) {
-      if (varianteOriginal && !marcaOficial) {
-        modelo.totalPendientes++;
-        modelo.filasParaRevision.push(numeroFila);
+      if (!marca) {
+        modelo.pendientes++;
+        modelo.filasRevision.push(numeroFila);
+        return;
       }
-      return;
-    }
 
-    modelo.totalRelaciones++;
-    if (!nombresCanonicos.has(claveCanonica)) {
-      nombresCanonicos.set(claveCanonica, marcaOficial);
-    }
+      modelo.relaciones++;
+      const canonica = normalizar_(marca);
+      if (!nombresCanonicos.has(canonica)) nombresCanonicos.set(canonica, marca);
+      if (!destinos.has(variante)) destinos.set(variante, new Set());
+      destinos.get(variante).add(canonica);
 
-    if (!destinosPorVariante.has(variante)) destinosPorVariante.set(variante, new Set());
-    destinosPorVariante.get(variante).add(claveCanonica);
-    if (!filasPorVariante.has(variante)) filasPorVariante.set(variante, []);
-    filasPorVariante.get(variante).push(numeroFila);
-
-    formasTemporales.push({
-      claveCanonica: claveCanonica,
-      texto: variante
-    });
-    formasTemporales.push({
-      claveCanonica: claveCanonica,
-      texto: claveCanonica
+      if (esColorPendiente_(fondos[indice][0]) || esColorPendiente_(fondos[indice][1])) {
+        modelo.filasAprobadasEnRojo.push(numeroFila);
+      }
     });
 
-    if (esColorPendiente_(fondos[indice][0]) || esColorPendiente_(fondos[indice][1])) {
-      modelo.filasAprobadasEnRojo.push(numeroFila);
-    }
-  });
-
-  destinosPorVariante.forEach(function(destinos, variante) {
-    if (destinos.size === 1) {
-      const clave = Array.from(destinos)[0];
-      modelo.exactas.set(variante, nombresCanonicos.get(clave));
-    } else {
-      const filasConflicto = filasPorVariante.get(variante) || [];
-      Array.prototype.push.apply(modelo.filasParaRevision, filasConflicto);
-      modelo.conflictos.push({
-        variante: variante,
-        marcas: Array.from(destinos).map(function(clave) {
-          return nombresCanonicos.get(clave);
-        })
-      });
-    }
-  });
-
-  modelo.filasParaRevision = Array.from(new Set(modelo.filasParaRevision));
-  const filasRevision = new Set(modelo.filasParaRevision);
-  modelo.filasAprobadasEnRojo = modelo.filasAprobadasEnRojo.filter(function(numeroFila) {
-    return !filasRevision.has(numeroFila);
-  });
-
-  nombresCanonicos.forEach(function(nombre, clave) {
-    if (!modelo.exactas.has(clave)) modelo.exactas.set(clave, nombre);
-  });
-
-  const formasVistas = new Set();
-  formasTemporales.forEach(function(forma) {
-    const identificador = forma.claveCanonica + '|' + forma.texto;
-    if (formasVistas.has(identificador)) return;
-    formasVistas.add(identificador);
-
-    const marca = nombresCanonicos.get(forma.claveCanonica);
-    const compacta = compactarMarca_(forma.texto);
-    const firma = firmaConsonantica_(forma.texto);
-    modelo.formas.push({
-      claveCanonica: forma.claveCanonica,
-      marca: marca,
-      texto: forma.texto,
-      compacta: compacta,
-      firma: firma
+    destinos.forEach(function(marcas, variante) {
+      if (marcas.size !== 1) {
+        Array.prototype.push.apply(modelo.filasRevision, filasPorVariante.get(variante));
+        modelo.conflictos.push(variante);
+        return;
+      }
+      modelo.exactas.set(variante, nombresCanonicos.get(Array.from(marcas)[0]));
     });
 
-    if (firma.length >= CONFIG_MARCAS.LONGITUD_MINIMA_FIRMA) {
+    nombresCanonicos.forEach(function(marca, canonica) {
+      if (!modelo.exactas.has(canonica)) modelo.exactas.set(canonica, marca);
+    });
+    modelo.exactas.forEach(function(marca, variante) {
+      agregarForma_(modelo, variante, marca);
+      agregarForma_(modelo, normalizar_(marca), marca);
+    });
+
+    modelo.filasRevision = Array.from(new Set(modelo.filasRevision));
+    const filasRevision = new Set(modelo.filasRevision);
+    modelo.filasAprobadasEnRojo = modelo.filasAprobadasEnRojo.filter(function(fila) {
+      return !filasRevision.has(fila);
+    });
+    return modelo;
+  }
+
+  function agregarForma_(modelo, texto, marca) {
+    const compacta = compactar_(texto);
+    if (!modelo.formas.some(function(forma) { return forma.texto === texto && forma.marca === marca; })) {
+      modelo.formas.push({ texto: texto, compacta: compacta, marca: marca });
+    }
+    const firma = firmaConsonantica_(texto);
+    if (firma.length >= CONFIGURACION.longitudMinimaFirma) {
       if (!modelo.firmas.has(firma)) modelo.firmas.set(firma, new Set());
-      modelo.firmas.get(firma).add(forma.claveCanonica);
+      modelo.firmas.get(firma).add(marca);
     }
-  });
+  }
 
-  modelo.nombresCanonicos = nombresCanonicos;
-  return modelo;
-}
+  function procesarColumnaH_(hoja, modelo) {
+    const resultado = {
+      filasRevisadas: 0, homologadas: 0, formulasOmitidas: 0, vacias: 0,
+      aprendizajes: new Map(), pendientes: new Map()
+    };
+    const ultimaFila = hoja.getLastRow();
+    if (ultimaFila < CONFIGURACION.primeraFilaDatos) return resultado;
 
-function procesarMarcas_(hoja, modelo) {
-  const ultimaFila = hoja.getLastRow();
-  const resultado = {
-    filasRevisadas: 0,
-    homologadas: 0,
-    vacias: 0,
-    pendientesYaRegistradas: 0,
-    pendientes: new Map(),
-    metodos: { exacta: 0, prefijo: 0, firma: 0, similitud: 0 }
-  };
+    const cantidad = ultimaFila - CONFIGURACION.primeraFilaDatos + 1;
+    const rango = hoja.getRange(CONFIGURACION.primeraFilaDatos, CONFIGURACION.columnaMarca, cantidad, 1);
+    const valores = rango.getValues();
+    const formulas = rango.getFormulas();
+    let huboCambios = false;
 
-  if (ultimaFila < CONFIG_MARCAS.PRIMERA_FILA_DATOS) return resultado;
-
-  const cantidad = ultimaFila - CONFIG_MARCAS.PRIMERA_FILA_DATOS + 1;
-  const rango = hoja.getRange(
-    CONFIG_MARCAS.PRIMERA_FILA_DATOS,
-    CONFIG_MARCAS.COLUMNA_MARCA,
-    cantidad,
-    1
-  );
-  const valores = rango.getValues();
-  const formulas = rango.getFormulas();
-  let huboCambios = false;
-
-  valores.forEach(function(fila, indice) {
-    const valorOriginal = fila[0];
-    const textoOriginal = String(valorOriginal == null ? '' : valorOriginal).trim();
-    if (!textoOriginal) {
-      resultado.vacias++;
-      return;
-    }
-
-    resultado.filasRevisadas++;
-    const clasificacion = clasificarMarca_(textoOriginal, modelo);
-
-    if (clasificacion.segura) {
-      if (String(valorOriginal) !== clasificacion.marca) {
-        valores[indice][0] = clasificacion.marca;
-        huboCambios = true;
+    valores.forEach(function(fila, indice) {
+      const original = String(fila[0] == null ? '' : fila[0]).trim();
+      if (!original) {
+        resultado.vacias++;
+        return;
       }
-      resultado.homologadas++;
-      resultado.metodos[clasificacion.metodo]++;
-      return;
-    }
+      if (formulas[indice][0]) {
+        resultado.formulasOmitidas++;
+        return;
+      }
 
-    if (formulas[indice][0]) valores[indice][0] = formulas[indice][0];
-    const normalizada = normalizarMarca_(textoOriginal);
-    if (modelo.variantesExistentes.has(normalizada)) {
-      resultado.pendientesYaRegistradas++;
-      return;
-    }
-
-    if (!resultado.pendientes.has(normalizada)) {
-      resultado.pendientes.set(normalizada, {
-        original: textoOriginal,
-        sugerencia: clasificacion.sugerencia || '',
-        confianza: clasificacion.confianza || 0
-      });
-    }
-  });
-
-  if (huboCambios) rango.setValues(valores);
-  return resultado;
-}
-
-function clasificarMarca_(textoOriginal, modelo) {
-  const normalizada = normalizarMarca_(textoOriginal);
-  const compacta = compactarMarca_(normalizada);
-
-  if (modelo.exactas.has(normalizada)) {
-    return resultadoSeguro_(modelo.exactas.get(normalizada), 'exacta', 1);
-  }
-
-  const porPrefijo = buscarPorPrefijo_(compacta, modelo.formas);
-  if (porPrefijo) return resultadoSeguro_(porPrefijo, 'prefijo', 0.96);
-
-  const firma = firmaConsonantica_(normalizada);
-  if (firma.length >= CONFIG_MARCAS.LONGITUD_MINIMA_FIRMA && modelo.firmas.has(firma)) {
-    const claves = modelo.firmas.get(firma);
-    if (claves.size === 1) {
-      const clave = Array.from(claves)[0];
-      return resultadoSeguro_(modelo.nombresCanonicos.get(clave), 'firma', 0.94);
-    }
-  }
-
-  const porSimilitud = buscarPorSimilitud_(compacta, modelo.formas);
-  if (porSimilitud.segura) {
-    return resultadoSeguro_(porSimilitud.marca, 'similitud', porSimilitud.confianza);
-  }
-
-  return {
-    segura: false,
-    marca: '',
-    metodo: 'pendiente',
-    confianza: porSimilitud.confianza,
-    sugerencia: porSimilitud.marca
-  };
-}
-
-function buscarPorPrefijo_(entrada, formas) {
-  if (entrada.length < CONFIG_MARCAS.LONGITUD_MINIMA_PREFIJO) return '';
-
-  const candidatas = new Map();
-  formas.forEach(function(forma) {
-    const candidata = forma.compacta;
-    if (!candidata) return;
-
-    const menor = Math.min(entrada.length, candidata.length);
-    const mayor = Math.max(entrada.length, candidata.length);
-    if (menor < CONFIG_MARCAS.LONGITUD_MINIMA_PREFIJO) return;
-    if (menor / mayor < CONFIG_MARCAS.PROPORCION_MINIMA_PREFIJO) return;
-    if (!entrada.startsWith(candidata) && !candidata.startsWith(entrada)) return;
-
-    candidatas.set(forma.claveCanonica, forma.marca);
-  });
-
-  return candidatas.size === 1 ? Array.from(candidatas.values())[0] : '';
-}
-
-function buscarPorSimilitud_(entrada, formas) {
-  if (entrada.length < CONFIG_MARCAS.LONGITUD_MINIMA_SIMILITUD) {
-    return { segura: false, marca: '', confianza: 0 };
-  }
-
-  const puntajes = new Map();
-  formas.forEach(function(forma) {
-    if (!forma.compacta) return;
-    const distancia = levenshteinMarcas_(entrada, forma.compacta);
-    const longitud = Math.max(entrada.length, forma.compacta.length);
-    const confianza = longitud ? 1 - distancia / longitud : 0;
-    const actual = puntajes.get(forma.claveCanonica);
-    if (!actual || confianza > actual.confianza) {
-      puntajes.set(forma.claveCanonica, {
-        marca: forma.marca,
-        confianza: confianza
-      });
-    }
-  });
-
-  const ordenados = Array.from(puntajes.values()).sort(function(a, b) {
-    return b.confianza - a.confianza;
-  });
-  if (!ordenados.length) return { segura: false, marca: '', confianza: 0 };
-
-  const mejor = ordenados[0];
-  const segundo = ordenados[1] || { confianza: 0 };
-  const diferencia = mejor.confianza - segundo.confianza;
-  return {
-    segura: mejor.confianza >= CONFIG_MARCAS.CONFIANZA_MINIMA &&
-      diferencia >= CONFIG_MARCAS.DIFERENCIA_MINIMA,
-    marca: mejor.marca,
-    confianza: mejor.confianza
-  };
-}
-
-function registrarPendientes_(hoja, pendientes, variantesExistentes) {
-  const nuevas = [];
-  pendientes.forEach(function(pendiente, normalizada) {
-    if (variantesExistentes.has(normalizada)) return;
-    nuevas.push([pendiente.original, '']);
-    variantesExistentes.add(normalizada);
-    logMarcas_('PENDIENTE: se agregó una marca al diccionario para revisión.', {
-      marcaRecibida: pendiente.original,
-      sugerencia: pendiente.sugerencia || '(sin sugerencia)',
-      confianza: pendiente.confianza
-        ? Math.round(pendiente.confianza * 100) + '%'
-        : '0%'
+      resultado.filasRevisadas++;
+      const clasificacion = clasificar_(original, modelo);
+      const clave = normalizar_(original);
+      if (clasificacion.segura) {
+        if (original !== clasificacion.marca) {
+          valores[indice][0] = clasificacion.marca;
+          huboCambios = true;
+        }
+        resultado.homologadas++;
+        if (!modelo.exactas.has(clave)) {
+          resultado.aprendizajes.set(clave, { variante: original.toUpperCase(), homologada: clasificacion.marca });
+        }
+      } else if (!modelo.existentes.has(clave)) {
+        resultado.pendientes.set(clave, original.toUpperCase());
+      }
     });
-  });
 
-  if (!nuevas.length) return 0;
-
-  const filaInicial = hoja.getLastRow() + 1;
-  const rango = hoja.getRange(filaInicial, 1, nuevas.length, 2);
-  rango.setValues(nuevas)
-    .setBackground(CONFIG_MARCAS.COLOR_PENDIENTE)
-    .setFontColor('#990000');
-  return nuevas.length;
-}
-
-function limpiarFilasAprobadas_(hoja, filas) {
-  filas.forEach(function(numeroFila) {
-    hoja.getRange(numeroFila, 1, 1, 2)
-      .setBackground(CONFIG_MARCAS.COLOR_APROBADO)
-      .setFontColor('#000000');
-  });
-
-  if (filas.length) {
-    logMarcas_('Se quitaron las marcas rojas de relaciones ya confirmadas.', {
-      cantidad: filas.length
-    });
+    if (huboCambios) rango.setValues(valores);
+    return resultado;
   }
-}
 
-function marcarFilasParaRevision_(hoja, filas) {
-  filas.forEach(function(numeroFila) {
-    hoja.getRange(numeroFila, 1, 1, 2)
-      .setBackground(CONFIG_MARCAS.COLOR_PENDIENTE)
-      .setFontColor('#990000');
-  });
+  function clasificar_(original, modelo) {
+    const texto = normalizar_(original);
+    const compacta = compactar_(texto);
+    if (modelo.exactas.has(texto)) return { segura: true, marca: modelo.exactas.get(texto) };
 
-  if (filas.length) {
-    logMarcas_('Se marcaron en rojo las filas pendientes o con conflicto.', {
-      cantidad: filas.length
-    });
-  }
-}
+    const prefijo = buscarPorPrefijo_(compacta, modelo.formas);
+    if (prefijo) return { segura: true, marca: prefijo };
 
-function normalizarMarca_(valor) {
-  return String(valor == null ? '' : valor)
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function compactarMarca_(valor) {
-  return normalizarMarca_(valor).replace(/\s+/g, '');
-}
-
-function firmaConsonantica_(valor) {
-  return compactarMarca_(valor).replace(/[aeiou]/g, '');
-}
-
-function resultadoSeguro_(marca, metodo, confianza) {
-  return {
-    segura: true,
-    marca: marca,
-    metodo: metodo,
-    confianza: confianza,
-    sugerencia: marca
-  };
-}
-
-function levenshteinMarcas_(a, b) {
-  if (a === b) return 0;
-  if (!a.length) return b.length;
-  if (!b.length) return a.length;
-
-  let anterior = [];
-  let actual = [];
-  for (let j = 0; j <= b.length; j++) anterior[j] = j;
-
-  for (let i = 1; i <= a.length; i++) {
-    actual = [i];
-    for (let j = 1; j <= b.length; j++) {
-      const costo = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
-      actual[j] = Math.min(
-        anterior[j] + 1,
-        actual[j - 1] + 1,
-        anterior[j - 1] + costo
-      );
+    const firma = firmaConsonantica_(texto);
+    const marcasFirma = modelo.firmas.get(firma);
+    if (firma.length >= CONFIGURACION.longitudMinimaFirma && marcasFirma && marcasFirma.size === 1) {
+      return { segura: true, marca: Array.from(marcasFirma)[0] };
     }
-    anterior = actual;
+    return buscarPorSimilitud_(compacta, modelo.formas);
   }
-  return anterior[b.length];
-}
 
-function esColorPendiente_(color) {
-  return String(color || '').toLowerCase() === CONFIG_MARCAS.COLOR_PENDIENTE;
-}
+  function buscarPorPrefijo_(entrada, formas) {
+    if (entrada.length < CONFIGURACION.longitudMinimaPrefijo) return '';
+    const candidatas = new Set();
+    formas.forEach(function(forma) {
+      const menor = Math.min(entrada.length, forma.compacta.length);
+      const mayor = Math.max(entrada.length, forma.compacta.length);
+      if (menor && menor / mayor >= CONFIGURACION.proporcionMinimaPrefijo &&
+          (entrada.indexOf(forma.compacta) === 0 || forma.compacta.indexOf(entrada) === 0)) {
+        candidatas.add(forma.marca);
+      }
+    });
+    return candidatas.size === 1 ? Array.from(candidatas)[0] : '';
+  }
 
-function obtenerHojaObligatoria_(archivoId, nombreHoja) {
-  const archivo = SpreadsheetApp.openById(archivoId);
-  const hoja = archivo.getSheetByName(nombreHoja);
-  if (!hoja) throw new Error('No se encontró la hoja "' + nombreHoja + '".');
-  return hoja;
-}
+  function buscarPorSimilitud_(entrada, formas) {
+    if (entrada.length < 5) return { segura: false, marca: '' };
+    const puntuaciones = new Map();
+    formas.forEach(function(forma) {
+      const longitud = Math.max(entrada.length, forma.compacta.length);
+      if (!longitud) return;
+      const confianza = 1 - distanciaLevenshtein_(entrada, forma.compacta) / longitud;
+      if (confianza > (puntuaciones.get(forma.marca) || 0)) puntuaciones.set(forma.marca, confianza);
+    });
+    const candidatas = Array.from(puntuaciones.entries())
+      .map(function(par) { return { marca: par[0], confianza: par[1] }; })
+      .sort(function(a, b) { return b.confianza - a.confianza; });
+    if (!candidatas.length) return { segura: false, marca: '' };
+    const mejor = candidatas[0];
+    const diferencia = candidatas[1] ? mejor.confianza - candidatas[1].confianza : mejor.confianza;
+    return {
+      segura: mejor.confianza >= CONFIGURACION.confianzaMinima && diferencia >= CONFIGURACION.diferenciaMinima,
+      marca: mejor.marca
+    };
+  }
 
-function logMarcas_(mensaje, datos) {
-  const detalle = datos && typeof datos === 'object'
-    ? Object.keys(datos).map(function(clave) {
-        return clave + ': ' + String(datos[clave]);
-      }).join(' | ')
-    : '';
-  Logger.log('[MARCAS] ' + mensaje + (detalle ? ' | ' + detalle : ''));
+  function guardarAprendizajes_(hoja, modelo, aprendizajes, pendientes) {
+    let aprendidas = 0;
+    let pendientesNuevas = 0;
+    const filasNuevas = [];
+    aprendizajes.forEach(function(aprendizaje, clave) {
+      const existente = modelo.filas.get(clave);
+      if (existente && !existente.homologada) {
+        hoja.getRange(existente.fila, 1, 1, 2).setValues([[aprendizaje.variante, aprendizaje.homologada]]).setBackground(CONFIGURACION.colorAprobado);
+        aprendidas++;
+      } else if (!existente) {
+        filasNuevas.push([aprendizaje.variante, aprendizaje.homologada]);
+        aprendidas++;
+      }
+    });
+    pendientes.forEach(function(variante, clave) {
+      if (!modelo.existentes.has(clave)) {
+        filasNuevas.push([variante, '']);
+        pendientesNuevas++;
+      }
+    });
+    if (filasNuevas.length) {
+      const rango = hoja.getRange(hoja.getLastRow() + 1, 1, filasNuevas.length, 2);
+      rango.setValues(filasNuevas);
+      rango.setBackgrounds(filasNuevas.map(function(fila) {
+        return fila[1] ? [CONFIGURACION.colorAprobado, CONFIGURACION.colorAprobado] : [CONFIGURACION.colorPendiente, CONFIGURACION.colorPendiente];
+      }));
+    }
+    Logger.log(CONFIGURACION.prefijoLog + ' Aprendizaje guardado. | aliases: ' + aprendidas + ' | pendientes nuevas: ' + pendientesNuevas);
+    return { aprendidas: aprendidas, pendientes: pendientesNuevas };
+  }
+
+  function pintarFilas_(hoja, filas, color) {
+    if (filas.length) hoja.getRangeList(filas.map(function(fila) { return 'A' + fila + ':B' + fila; })).setBackground(color);
+  }
+
+  function normalizar_(valor) {
+    return String(valor == null ? '' : valor).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function compactar_(valor) {
+    return normalizar_(valor).replace(/\s/g, '');
+  }
+
+  function firmaConsonantica_(valor) {
+    return compactar_(valor).replace(/[aeiou]/g, '');
+  }
+
+  function distanciaLevenshtein_(a, b) {
+    let anterior = Array.from({ length: b.length + 1 }, function(_, indice) { return indice; });
+    for (let i = 1; i <= a.length; i++) {
+      const actual = [i];
+      for (let j = 1; j <= b.length; j++) {
+        actual[j] = a[i - 1] === b[j - 1] ? anterior[j - 1] : Math.min(anterior[j - 1] + 1, actual[j - 1] + 1, anterior[j] + 1);
+      }
+      anterior = actual;
+    }
+    return anterior[b.length];
+  }
+
+  function esColorPendiente_(color) {
+    return String(color || '').toLowerCase() === CONFIGURACION.colorPendiente;
+  }
+
+  return { ejecutar: ejecutar };
+})();
+
+function validarConArchivoControl() {
+  const hoja = SpreadsheetApp.openById("1ILqk0fo56GO6zCXUcOWpb41eUQQUrOZDZLgaQuD57VM").getSheetByName("update");
+  const estado = hoja.getRange("B2").getValue();
+  return estado === "update";
 }
